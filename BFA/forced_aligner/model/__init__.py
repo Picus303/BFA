@@ -43,7 +43,7 @@ class RNNT:
 		# Build Attention Mask:
 		# This should note be necessary, but I messed up the indices for mask selection during training
 		# Because of that, the EOS token must be masked -> Will be fixed if I retrain the model
-		mask: Tensor = torch.zeros((1, text_length+1, text_length+1), device=self.device)
+		mask: Tensor = torch.zeros((1, text_length, text_length), device=self.device)
 		mask[:, :, :-1] = 1
 
 		# Pass Forward

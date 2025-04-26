@@ -1,6 +1,10 @@
 import yaml
 
 
+class Failure(str):
+	pass
+
+
 def load_cfg(cfg_path: str) -> dict:
 	"""Load the configuration file."""
 	with open(cfg_path, "r") as f:

@@ -37,4 +37,15 @@ g2p_engine:
     modifiers: ['ˈ', 'ˌ', 'ː', 'ᵊ']
     pontuation: ['.', ',', '!', '?', ':', ';', '-', '—', '_', '(', ')', '[', ']', '{', '}', "'", '"']
 
-tokenizer_path: "tokenizer/tokenizer.pkl"
+tensor_preprocessor:
+    audio:
+        sample_rate: 16000
+        win_size: 512
+        hop_size: 256
+        n_fft: 512
+        n_mels: 40
+        f_min: 0
+        f_max: 8000
+
+    text:
+        tokenizer_path: "tokenizer/tokenizer.pkl"
