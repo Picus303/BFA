@@ -1,0 +1,22 @@
+[project]
+name        = "BFA"
+version     = "0.1.0"
+description = "CLI tool for RNN-T based text/audio forced alignment."
+authors     = [{name="Picus303", email="pilleurc@protonmail.com"}]
+readme      = "README.md"
+
+requires-python = ">=3.12"
+dependencies = [
+    "torch>=2.6",
+    "torchaudio>=2.6",
+    "typer[all]>=0.15",
+    "misaki==0.9",
+    "matplotlib>=3.8"
+]
+
+[project.scripts]
+aligner = "BFA.main:app"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"

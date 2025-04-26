@@ -1,0 +1,28 @@
+model:
+    build_args:
+        encoder:
+            mel_dim: 40
+            num_layers: 2
+            hidden_size: 256
+            output_size: 64
+
+        decoder:
+            dropout: 0.2
+            source_vocab_size: 48
+            context_length: 282
+            output_dim: 64
+            encoder_block_count: 8
+            encoder_self_attention_head_count: 4
+            encoder_self_attention_abstraction_coef: 0.25
+            encoder_feed_forward_abstraction_coef: 2.0
+            dim: 64
+            epsilon: 1e-9
+
+        joint:_network:
+            dim: 64
+            vocab_size: 48
+
+    weights_paths:
+        encoder: "weights/bfa_model_encoder_100.pt"
+        decoder: "weights/bfa_model_decoder_100.pt"
+        joint_network: "weights/bfa_model_joint_network_100.pt"
