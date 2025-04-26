@@ -14,7 +14,6 @@ def align(
     out_dir: Path = typer.Option("out/", writable=True),
     cfg: Path = typer.Option("config.yaml", exists=True)
 ):
-    """Aligne des fichiers WAV + LAB et écrit des TextGrid."""
     aligner = ForcedAligner.from_config(load_cfg(cfg))
     aligner.align_corpus(wav_dir, lab_dir, out_dir)
 

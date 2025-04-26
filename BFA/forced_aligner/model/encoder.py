@@ -62,6 +62,8 @@ class Encoder(nn.Module):
 	def forward(self, x: Tensor, l: Tensor):	# x: (B, 1, T, F)
 		batch_size = x.size(0)
 
+		# Part 1: CNN
+
 		x = self.conv1(x)		# x: (B, 16, T, F)
 		x = self.norm1(x)
 		x = self.GELU(x)
@@ -74,6 +76,8 @@ class Encoder(nn.Module):
 		x = self.pool2(x)		# x: (B, 32, T, F/8)
 		x = self.dropout(x)
 
+		# Part 2: LSTM
+
 		x = x.permute(0, 2, 1, 3)							# x: (B, T, 32, F/8)
 		x = x.contiguous().view(x.size(0), x.size(1), -1)	# x: (B, T, 4*F)
 
@@ -85,7 +89,7 @@ class Encoder(nn.Module):
 		c0 = self.c0.expand(-1, batch_size, -1).contiguous()
 
 		x, _ = self.lstm(x, (h0, c0))	# x: (B, T, 512)
-		x, _ = pad_packed_sequence(x, batch_first=True)#, total_length=1100)
+		x, _ = pad_packed_sequence(x, batch_first=True)
 		_, original_idx = sorted_idx.sort()
 		x = x[original_idx]
 

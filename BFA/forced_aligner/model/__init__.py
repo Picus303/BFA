@@ -9,7 +9,7 @@ from .joint_network import JointNetwork
 
 
 class RNNT:
-	def __init__(self, config: dict):
+	def __init__(self, config: dict) -> None:
 		self.config: dict = config
 		self.device = torch.device("cpu")	# Small model: faster on CPU -> no transfers
 
@@ -32,7 +32,7 @@ class RNNT:
 		self.joint_network.eval()
 
 
-	def forward(
+	def inference(
 		self,
 		spectrogram: Tensor,
 		text: Tensor,
@@ -41,11 +41,12 @@ class RNNT:
 	) -> Tensor:
 
 		# Build Attention Mask:
-		# This should note be necessary, but I messed up the indexes for mask selection during training
+		# This should note be necessary, but I messed up the indices for mask selection during training
 		# Because of that, the EOS token must be masked -> Will be fixed if I retrain the model
-		mask = torch.zeros((1, text_length+1, text_length+1), device=self.device)
+		mask: Tensor = torch.zeros((1, text_length+1, text_length+1), device=self.device)
 		mask[:, :, :-1] = 1
 
+		# Pass Forward
 		encoder_output = encoder(spectrogram, spectrogram_length.cpu())
 		decoder_output = decoder(text, mask)
 		joint_output = joint_network(encoder_output, decoder_output)
