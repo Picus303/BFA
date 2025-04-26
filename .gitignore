@@ -1,0 +1,6 @@
+# Compiled Python files
+__pycache__/
+*.py[cod]
+
+# Distribution / packaging
+build/
