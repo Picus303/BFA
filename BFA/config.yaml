@@ -36,3 +36,5 @@ g2p_engine:
 
     modifiers: ['ˈ', 'ˌ', 'ː', 'ᵊ']
     pontuation: ['.', ',', '!', '?', ':', ';', '-', '—', '_', '(', ')', '[', ']', '{', '}', "'", '"']
+
+tokenizer_path: "tokenizer/tokenizer.pkl"
