@@ -42,8 +42,8 @@ class TensorPreprocessor:
 			audio /= audio.abs().max()
 
 			# Apply the mel spectrogram transform
-			mel = self.mel_transform(audio).transpose(-1, -2)					# Transpose to (time, freq) format
-			l_mel = torch.tensor(mel.shape[0], dtype=torch.int32).unsqueeze(0)	# Length of the mel spectrogram
+			mel = self.mel_transform(audio).transpose(-1, -2).unsqueeze(1)		# Convert to (batch, channel, time, frequency)
+			l_mel = torch.tensor(mel.shape[2], dtype=torch.int32).unsqueeze(0)	# Length of the mel spectrogram
 
 			return mel, l_mel
 
@@ -57,8 +57,8 @@ class TensorPreprocessor:
 			phoneme_ids = self.tokenizer.encode(phonemes)
 
 			# Convert to tensor
-			phoneme_tensor = torch.tensor(phoneme_ids, dtype=torch.int32).unsqueeze(0)	# Add batch dimension
-			l_phoneme = torch.tensor(len(phoneme_ids), dtype=torch.int32).unsqueeze(0)	# Length of the phoneme sequence
+			phoneme_tensor = torch.tensor(phoneme_ids, dtype=torch.int32).unsqueeze(0)
+			l_phoneme = torch.tensor(len(phoneme_ids), dtype=torch.int32).unsqueeze(0)
 
 			return phoneme_tensor, l_phoneme
 

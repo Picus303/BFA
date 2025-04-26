@@ -23,9 +23,9 @@ model:
             vocab_size: 48
 
     weights_paths:
-        encoder: "weights/bfa_model_encoder_100.pt"
-        decoder: "weights/bfa_model_decoder_100.pt"
-        joint_network: "weights/bfa_model_joint_network_100.pt"
+        encoder: "forced_aligner/model/weights/bfa_model_encoder_100.pt"
+        decoder: "forced_aligner/model/weights/bfa_model_decoder_100.pt"
+        joint_network: "forced_aligner/model/weights/bfa_model_joint_network_100.pt"
 
 g2p_engine:
     special_tokens:
@@ -48,4 +48,11 @@ tensor_preprocessor:
         f_max: 8000
 
     text:
-        tokenizer_path: "tokenizer/tokenizer.pkl"
+        tokenizer_path: "forced_aligner/tokenizer/tokenizer.pkl"
+
+logger:
+    name: "BFA"
+    base_log_level: "INFO"
+    file_log_level: "DEBUG"
+    console_log_level: "WARNING"
+    log_file: "logs/bfa.log"
