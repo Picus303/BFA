@@ -50,6 +50,9 @@ tensor_preprocessor:
     text:
         tokenizer_path: "forced_aligner/tokenizer/tokenizer.pkl"
 
+textgrid_writer:
+    special_tokens: ["<SIL>", "<SOS>", "<EOS>"]
+
 logger:
     name: "BFA"
     base_log_level: "INFO"

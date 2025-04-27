@@ -1,10 +1,13 @@
 import torch
 from torch import Tensor
+from typing import Union
 import torch.nn.functional as F
 
 from .encoder import Encoder
 from .decoder import EncoderOnlyTransformer, build_encoder_only_transformer
 from .joint_network import JointNetwork
+
+from BFA.utils import Failure
 
 
 
@@ -38,18 +41,22 @@ class RNNT:
 		text: Tensor,
 		spectrogram_length: Tensor,
 		text_length: Tensor
-	) -> Tensor:
+	) -> Union[Tensor, Failure]:
 
-		with torch.no_grad():
-			# Build Attention Mask:
-			# This should note be necessary, but I messed up the indices for mask selection during training
-			# Because of that, the EOS token must be masked -> Will be fixed if I retrain the model
-			mask: Tensor = torch.zeros((1, text_length, text_length), device=self.device)
-			mask[:, :, :-1] = 1
+		try:
+			with torch.no_grad():
+				# Build Attention Mask:
+				# This should note be necessary, but I messed up the indices for mask selection during training
+				# Because of that, the EOS token must be masked -> Will be fixed if I retrain the model
+				mask: Tensor = torch.zeros((1, text_length, text_length), device=self.device)
+				mask[:, :, :-1] = 1
 
-			# Pass Forward
-			encoder_output = encoder(spectrogram, spectrogram_length.cpu())
-			decoder_output = decoder(text, mask)
-			joint_output = joint_network(encoder_output, decoder_output)
+				# Pass Forward
+				encoder_output = encoder(spectrogram, spectrogram_length.cpu())
+				decoder_output = decoder(text, mask)
+				joint_output = joint_network(encoder_output, decoder_output)
 
-			return joint_output
+				return joint_output
+
+		except Exception as e:
+			return Failure(f"Error during inference: {e}")

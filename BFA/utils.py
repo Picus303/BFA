@@ -9,7 +9,7 @@ from logging import (
 )
 
 from pathlib import Path
-from typing import Union, Tuple, Any
+from typing import Optional, Union, List, Tuple, Any	
 
 PATHS = (
 	("model", "weights_paths", "encoder"),
@@ -21,8 +21,10 @@ PATHS = (
 
 
 
-class Failure(str):
-	pass
+Failure = str
+Alignment = List[Tuple[int, int, Optional[int]]]
+Durations = List[Tuple[str, float]]
+Intervals = List[Tuple[float, float, str]]
 
 
 
