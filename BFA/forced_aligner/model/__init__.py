@@ -40,16 +40,16 @@ class RNNT:
 		text_length: Tensor
 	) -> Tensor:
 
-		# Build Attention Mask:
-		# This should note be necessary, but I messed up the indices for mask selection during training
-		# Because of that, the EOS token must be masked -> Will be fixed if I retrain the model
-		mask: Tensor = torch.zeros((1, text_length, text_length), device=self.device)
-		mask[:, :, :-1] = 1
+		with torch.no_grad():
+			# Build Attention Mask:
+			# This should note be necessary, but I messed up the indices for mask selection during training
+			# Because of that, the EOS token must be masked -> Will be fixed if I retrain the model
+			mask: Tensor = torch.zeros((1, text_length, text_length), device=self.device)
+			mask[:, :, :-1] = 1
 
-		# Pass Forward
-		encoder_output = encoder(spectrogram, spectrogram_length.cpu())
-		decoder_output = decoder(text, mask)
-		joint_output = joint_network(encoder_output, decoder_output)
+			# Pass Forward
+			encoder_output = encoder(spectrogram, spectrogram_length.cpu())
+			decoder_output = decoder(text, mask)
+			joint_output = joint_network(encoder_output, decoder_output)
 
-		joint_output = F.log_softmax(joint_output, dim=-1)
-		return joint_output
+			return joint_output
