@@ -38,6 +38,7 @@ text_preprocessor:
     pontuation: ['.', ',', '!', '?', ':', ';', '-', '—', '_', '(', ')', '[', ']', '{', '}', "'", '"']
 
     tokenizer_path: "forced_aligner/tokenizer/tokenizer.pkl"
+    ipa_mapping_path: "forced_aligner/text_preprocessor/ipa_mapping.json"
 
 audio_preprocessor:
     sample_rate: 16000

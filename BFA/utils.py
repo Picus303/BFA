@@ -73,38 +73,34 @@ def load_cfg(cfg_path: str, root: Path) -> Union[dict, Failure]:
 
 
 
-def get_logger(config: dict) -> Union[Logger, Failure]:
+def get_logger(config: dict) -> Logger:
 	"""Initialize the logger."""
 
-	try:
-		# Create log directory if it doesn't exist
-		log_dir = os.path.dirname(config["log_file"])
-		if not os.path.exists(log_dir):
-			os.makedirs(log_dir)
+	# Create log directory if it doesn't exist
+	log_dir = os.path.dirname(config["log_file"])
+	if not os.path.exists(log_dir):
+		os.makedirs(log_dir)
 
-		# Set up logging
-		logger = logging.getLogger(config["name"])
-		logger.setLevel(config["base_log_level"])
+	# Set up logging
+	logger = logging.getLogger(config["name"])
+	logger.setLevel(config["base_log_level"])
 
-		# Create file handler
-		file_handler = FileHandler(config["log_file"])
-		file_handler.setLevel(config["file_log_level"])
+	# Create file handler
+	file_handler = FileHandler(config["log_file"])
+	file_handler.setLevel(config["file_log_level"])
 
-		# Create console handler
-		console_handler = StreamHandler()
-		console_handler.setLevel(config["console_log_level"])
+	# Create console handler
+	console_handler = StreamHandler()
+	console_handler.setLevel(config["console_log_level"])
 
-		# Create formatter
-		formatter = Formatter(config["log_format"])
+	# Create formatter
+	formatter = Formatter(config["log_format"])
 
-		file_handler.setFormatter(formatter)
-		console_handler.setFormatter(formatter)
+	file_handler.setFormatter(formatter)
+	console_handler.setFormatter(formatter)
 
-		logger.addHandler(file_handler)
-		logger.addHandler(console_handler)
+	logger.addHandler(file_handler)
+	logger.addHandler(console_handler)
 
-		logger.info("Logger initialized")
-		return logger
-
-	except Exception as e:
-		return Failure(f"Failed to initialize logger: {e}")
+	logger.info("Logger initialized")
+	return logger

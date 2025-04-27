@@ -16,7 +16,7 @@ def align(
 	lab_dir: Path = typer.Option(..., exists=True, readable=True),
 	out_dir: Path = typer.Option("out/", writable=True),
 	dtype: Literal["words", "phonemes"] = typer.Option("words"),
-	ptype: Literal["Misaki", "ARPAbet", "IPA"] = typer.Option("Misaki"),
+	ptype: Literal["IPA", "Misaki"] = typer.Option("IPA"),
 	language: Literal["EN-GB", "EN-US"] = typer.Option("EN-GB"),
 	n_jobs: int = typer.Option(-1),
 ):
