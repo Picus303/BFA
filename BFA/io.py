@@ -58,40 +58,46 @@ class TextGridWriter:
 		word_labels: Optional[List[str]] = None
 	) -> Optional[Failure]:
 
-		phoneme_intervals, word_intervals = self.duration_to_intervals(durations, audio_duration, word_labels)
+		try:
+			phoneme_intervals, word_intervals = self.duration_to_intervals(durations, audio_duration, word_labels)
 
-		# Write the TextGrid file
-		with open(path, "w", encoding="utf-8") as f:
-			f.write('File type = "ooTextFile"\n')
-			f.write('Object class = "TextGrid"\n\n')
-			f.write('xmin = 0\n')
-			f.write(f'xmax = {audio_duration:.6f}\n')
-			f.write('tiers? <exists>\n')
-			f.write('size = 2\n')
-			f.write('item []:\n')
+			# Write the TextGrid file
+			with open(path, "w", encoding="utf-8") as f:
+				f.write('File type = "ooTextFile"\n')
+				f.write('Object class = "TextGrid"\n\n')
+				f.write('xmin = 0\n')
+				f.write(f'xmax = {audio_duration:.6f}\n')
+				f.write('tiers? <exists>\n')
+				f.write('size = 2\n')
+				f.write('item []:\n')
 
-			# Phoneme tier
-			f.write('    item [1]:\n')
-			f.write('        class = "IntervalTier"\n')
-			f.write(f'        name = "phones"\n')
-			f.write('        xmin = 0\n')
-			f.write(f'        xmax = {audio_duration:.6f}\n')
-			f.write(f'        intervals: size = {len(phoneme_intervals)}\n')
-			for i, (xmin, xmax, phn) in enumerate(phoneme_intervals, 1):
-				f.write(f'        intervals [{i}]:\n')
-				f.write(f'            xmin = {xmin:.6f}\n')
-				f.write(f'            xmax = {xmax:.6f}\n')
-				f.write(f'            text = "{phn}"\n')
+				# Phoneme tier
+				f.write('    item [1]:\n')
+				f.write('        class = "IntervalTier"\n')
+				f.write(f'        name = "phones"\n')
+				f.write('        xmin = 0\n')
+				f.write(f'        xmax = {audio_duration:.6f}\n')
+				f.write(f'        intervals: size = {len(phoneme_intervals)}\n')
+				for i, (xmin, xmax, phn) in enumerate(phoneme_intervals, 1):
+					f.write(f'        intervals [{i}]:\n')
+					f.write(f'            xmin = {xmin:.6f}\n')
+					f.write(f'            xmax = {xmax:.6f}\n')
+					f.write(f'            text = "{phn}"\n')
 
-			# Word tier
-			f.write('    item [2]:\n')
-			f.write('        class = "IntervalTier"\n')
-			f.write(f'        name = "words"\n')
-			f.write('        xmin = 0\n')
-			f.write(f'        xmax = {audio_duration:.6f}\n')
-			f.write(f'        intervals: size = {len(word_intervals)}\n')
-			for i, (xmin, xmax, label) in enumerate(word_intervals, 1):
-				f.write(f'        intervals [{i}]:\n')
-				f.write(f'            xmin = {xmin:.6f}\n')
-				f.write(f'            xmax = {xmax:.6f}\n')
-				f.write(f'            text = "{label}"\n')
+				# Word tier
+				f.write('    item [2]:\n')
+				f.write('        class = "IntervalTier"\n')
+				f.write(f'        name = "words"\n')
+				f.write('        xmin = 0\n')
+				f.write(f'        xmax = {audio_duration:.6f}\n')
+				f.write(f'        intervals: size = {len(word_intervals)}\n')
+				for i, (xmin, xmax, label) in enumerate(word_intervals, 1):
+					f.write(f'        intervals [{i}]:\n')
+					f.write(f'            xmin = {xmin:.6f}\n')
+					f.write(f'            xmax = {xmax:.6f}\n')
+					f.write(f'            text = "{label}"\n')
+
+			return None	# Success
+
+		except Exception as e:
+			return Failure(f"Error writing TextGrid file: {e}")

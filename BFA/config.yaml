@@ -1,4 +1,4 @@
-model:
+inference_engine:
     build_args:
         encoder:
             mel_dim: 40
@@ -27,7 +27,7 @@ model:
         decoder: "forced_aligner/model/weights/bfa_model_decoder_100.pt"
         joint_network: "forced_aligner/model/weights/bfa_model_joint_network_100.pt"
 
-g2p_engine:
+text_preprocessor:
     special_tokens:
         silence: "<SIL>"
         start_of_sequence: "<SOS>"
@@ -37,18 +37,16 @@ g2p_engine:
     modifiers: ['ˈ', 'ˌ', 'ː', 'ᵊ']
     pontuation: ['.', ',', '!', '?', ':', ';', '-', '—', '_', '(', ')', '[', ']', '{', '}', "'", '"']
 
-tensor_preprocessor:
-    audio:
-        sample_rate: 16000
-        win_size: 512
-        hop_size: 256
-        n_fft: 512
-        n_mels: 40
-        f_min: 0
-        f_max: 8000
+    tokenizer_path: "forced_aligner/tokenizer/tokenizer.pkl"
 
-    text:
-        tokenizer_path: "forced_aligner/tokenizer/tokenizer.pkl"
+audio_preprocessor:
+    sample_rate: 16000
+    win_size: 512
+    hop_size: 256
+    n_fft: 512
+    n_mels: 40
+    f_min: 0
+    f_max: 8000
 
 textgrid_writer:
     special_tokens: ["<SIL>", "<SOS>", "<EOS>"]

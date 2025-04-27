@@ -11,7 +11,7 @@ from BFA.utils import Failure
 
 
 
-class RNNT:
+class InferenceEngine:
 	def __init__(self, config: dict) -> None:
 		self.config: dict = config
 		self.device = torch.device("cpu")	# Small model: faster on CPU -> no transfers

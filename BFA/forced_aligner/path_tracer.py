@@ -21,8 +21,7 @@ def constrained_viterbi(
     Perform a forced-alignment Viterbi decoding under Sakoe-Chiba banding
     with an optional quadratic penalty for drift from the main diagonal.
 
-    This implementation processes the DP grid diagonally, allowing efficient
-    GPU execution in pure PyTorch (no custom kernels).
+    This implementation processes the DP grid diagonally for parallelization.
 
     Args:
         logits (Tensor): FloatTensor of shape (T, U+1, V), raw network scores
