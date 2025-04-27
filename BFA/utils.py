@@ -45,10 +45,12 @@ def write_dict(data: dict, keys: Tuple[str, ...], value: Any) -> None:
 def load_cfg(cfg_path: str, root: Path) -> Union[dict, Failure]:
 	"""Load the configuration file."""
 	try:
-		with open(cfg_path, "r") as f:
-			cfg = yaml.safe_load(f)
+		# Read the config file
+		cfg_path = os.join(root, cfg_path)
+		with open(cfg_path, "r") as file:
+			cfg = yaml.safe_load(file)
 
-		# Convert sets
+		# Convert lists to sets
 		cfg["g2p_engine"]["modifiers"] = set(cfg["g2p_engine"]["modifiers"])
 		cfg["g2p_engine"]["ponctuation"] = set(cfg["g2p_engine"]["ponctuation"])
 
