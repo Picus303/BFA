@@ -46,7 +46,8 @@ class PositionalEmbeddings(nn.Module):
 		self.register_buffer("pos_embedding", pos_embedding[None, :, :])
 
 	def forward(self, x):
-		return x + self.pos_embedding
+		context_lenght = x.size(1)
+		return x + self.pos_embedding[:, :context_lenght]
 
 
 class NormalisationLayer(nn.Module):
@@ -80,6 +81,7 @@ class MultiHeadAttentionBlock(nn.Module):
 
 	def forward(self, q, k, v, mask=None):
 		batch_size = q.size(0)
+		context_length = q.size(1)
 
 		# Transformation linéaire (B, C, H*D_a)
 		q_vect = self.q_weights(q)
@@ -87,9 +89,9 @@ class MultiHeadAttentionBlock(nn.Module):
 		v_vect = self.v_weights(v)
 
 		# Réorganisation pour parallélisme (B, H, C, D_a)
-		q_vect = q_vect.view(batch_size, self.context_length, self.head_count, self.abstract_dim).permute(0, 2, 1, 3)
-		k_vect = k_vect.view(batch_size, self.context_length, self.head_count, self.abstract_dim).permute(0, 2, 1, 3)
-		v_vect = v_vect.view(batch_size, self.context_length, self.head_count, self.abstract_dim).permute(0, 2, 1, 3)
+		q_vect = q_vect.view(batch_size, context_length, self.head_count, self.abstract_dim).permute(0, 2, 1, 3)
+		k_vect = k_vect.view(batch_size, context_length, self.head_count, self.abstract_dim).permute(0, 2, 1, 3)
+		v_vect = v_vect.view(batch_size, context_length, self.head_count, self.abstract_dim).permute(0, 2, 1, 3)
 
 		# Calcul des scores d'attention (B, H, C, C)
 		attention_scores = torch.matmul(q_vect, k_vect.transpose(-2, -1)) / self.abstract_dim_sqrt
@@ -102,7 +104,7 @@ class MultiHeadAttentionBlock(nn.Module):
 		attention_output = torch.matmul(attention_weights, v_vect)
 
 		# Concaténation des résultats (B, C, H*D_a)
-		attention_output = attention_output.permute(0, 2, 1, 3).contiguous().view(batch_size, self.context_length, self.head_count*self.abstract_dim)
+		attention_output = attention_output.permute(0, 2, 1, 3).contiguous().view(batch_size, context_length, self.head_count*self.abstract_dim)
 
 		# Projection de sortie (B, C, D)
 		output = self.p_weights(attention_output)
