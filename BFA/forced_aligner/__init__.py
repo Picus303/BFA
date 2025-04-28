@@ -23,7 +23,7 @@ class ForcedAligner:
 			self.audio_preprocessor = AudioPreprocessor(config["audio_preprocessor"])
 			self.inference_engine = InferenceEngine(config["inference_engine"])
 			self.textgrid_writer = TextGridWriter(config["textgrid_writer"])
-		
+
 		except Exception as e:
 			typer.echo(f"Failed to initialize Forced Aligner. Exiting...")
 			typer.echo(f"Error: {e}")
