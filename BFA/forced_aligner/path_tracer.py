@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from typing import Union, List, Tuple, Optional
 
-from BFA.utils import Failure, Alignment
+from BFA.utils import Failure, RawAlignment
 
 
 
@@ -16,7 +16,7 @@ def constrained_viterbi(
     blank_idx: int = 0,                # index of the blank symbol in the vocabulary
     band_ratio: float = 0.5,           # relative width of Sakoe-Chiba band (0.0 - 1.0)
     lambda_diag: float = 0.0,          # weight of quadratic penalty off diagonal
-) -> Union[Tuple[Alignment, torch.Tensor], Failure]:
+) -> Union[Tuple[RawAlignment, torch.Tensor], Failure]:
     """
     Perform a forced-alignment Viterbi decoding under Sakoe-Chiba banding
     with an optional quadratic penalty for drift from the main diagonal.

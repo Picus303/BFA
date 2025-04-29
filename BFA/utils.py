@@ -3,9 +3,11 @@ import yaml
 import logging
 from logging import (
 	Logger,
+	LogRecord,
 	StreamHandler,
 	FileHandler,
 	Formatter,
+	Filter,
 )
 
 from pathlib import Path
@@ -22,10 +24,8 @@ PATHS = (
 
 
 Failure = str
-Alignment = List[Tuple[int, int, Optional[int]]]
-Durations = List[Tuple[str, float]]
-Intervals = List[Tuple[float, float, str]]
-
+RawAlignment = List[Tuple[int, int, Optional[int]]]
+TranslatedAlignment = List[Tuple[int, int, Optional[str]]]
 
 
 def read_dict(data: dict, keys: Tuple[str, ...]) -> Union[Any, Failure]:
@@ -44,24 +44,27 @@ def write_dict(data: dict, keys: Tuple[str, ...], value: Any) -> None:
 
 
 
-def load_cfg(cfg_path: str, root: Path) -> Union[dict, Failure]:
+def load_cfg(cfg_path: Path, root: Path) -> Union[dict, Failure]:
 	"""Load the configuration file."""
 	try:
 		# Read the config file
-		cfg_path = os.join(root, cfg_path)
-		with open(cfg_path, "r") as file:
+		cfg_path = root / cfg_path
+		with cfg_path.open("r") as file:
 			cfg = yaml.safe_load(file)
 
 		# Convert lists to sets
+		cfg["supported_audio_formats"] = set(cfg["supported_audio_formats"])
+		cfg["supported_annotation_formats"] = set(cfg["supported_annotation_formats"])
 		cfg["g2p_engine"]["modifiers"] = set(cfg["g2p_engine"]["modifiers"])
 		cfg["g2p_engine"]["ponctuation"] = set(cfg["g2p_engine"]["ponctuation"])
+		cfg["textgrid_writer"]["special_tokens"] = set(cfg["textgrid_writer"]["special_tokens"])
 
 		# Convert paths to absolute paths
 		for path in PATHS:
 			value = read_dict(cfg, path)
 			if isinstance(value, str):
-				abs_path = os.path.abspath(os.path.join(root, value))
-				write_dict(cfg, path, abs_path)
+				abs_path = (root / value).resolve()
+				write_dict(cfg, path, str(abs_path))
 			else:
 				# Error in config file or while accessing the value
 				raise RuntimeError("Invalid path in config file")
@@ -77,9 +80,8 @@ def get_logger(config: dict) -> Logger:
 	"""Initialize the logger."""
 
 	# Create log directory if it doesn't exist
-	log_dir = os.path.dirname(config["log_file"])
-	if not os.path.exists(log_dir):
-		os.makedirs(log_dir)
+	log_dir = Path(config["log_file"]).parent
+	log_dir.mkdir(parents=True, exist_ok=True)
 
 	# Set up logging
 	logger = logging.getLogger(config["name"])
@@ -101,6 +103,13 @@ def get_logger(config: dict) -> Logger:
 
 	logger.addHandler(file_handler)
 	logger.addHandler(console_handler)
+
+	# Create a filter to hide certain log messages
+	class VerboseFilter(Filter):
+		def filter(self, record: LogRecord) -> bool:
+			return not getattr(record, "hidden", False)
+
+	console_handler.addFilter(VerboseFilter())
 
 	logger.info("Logger initialized")
 	return logger

@@ -27,6 +27,7 @@ inference_engine:
         decoder: "forced_aligner/model/weights/bfa_model_decoder_100.pt"
         joint_network: "forced_aligner/model/weights/bfa_model_joint_network_100.pt"
 
+
 text_preprocessor:
     special_tokens:
         silence: "<SIL>"
@@ -40,6 +41,7 @@ text_preprocessor:
     tokenizer_path: "forced_aligner/tokenizer/tokenizer.pkl"
     ipa_mapping_path: "forced_aligner/text_preprocessor/ipa_mapping.json"
 
+
 audio_preprocessor:
     sample_rate: 16000
     win_size: 512
@@ -49,8 +51,13 @@ audio_preprocessor:
     f_min: 0
     f_max: 8000
 
-textgrid_writer:
+
+io_manager:
+    sos_token: "<SOS>"
     special_tokens: ["<SIL>", "<SOS>", "<EOS>"]
+    supported_audio_formats: [".wav", ".mp3", ".flac", ".pcm"]
+    supported_annotation_formats: [".txt", ".lab"]
+
 
 logger:
     name: "BFA"

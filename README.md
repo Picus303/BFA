@@ -23,16 +23,16 @@ pip install bfa
 ## Usage (CLI)
 
 To align a corpus, two directories are expected:
-- One that contains all your audio files (**.wav** or other, as long as it's supported by [torchaudio](https://pytorch.org/audio/stable/generated/torchaudio.load.html))
-- One that contains all your annotations (**.txt** or **.lab** files only)
+- One that contains all your audio files (**.wav**, **.mp3**, **.flac** and **.pcm** files only)
+- One that contains all your annotations (**.txt** and **.lab** files only)
 
 You can find examples of such files in the [example](./examples) directory of this repository.
 A recursive search will be used so **the only constraint is that both directories uses the same structure**. If you use the same directory for both, then your .wav and .lab pairs should be in the same sub-directory.
 
 ```bash
 bfa align \
-  --wav-dir /path/to/wav_dir \
-  --lab-dir /path/to/lab_dir \
+  --audio-dir /path/to/audio_dir \
+  --text-dir /path/to/text_dir \
   --out-dir /path/to/out_dir \
   [--dtype {words, phonemes}] \
   [--ptype {IPA, Misaki}] \
@@ -49,6 +49,8 @@ Currently, the main limitation of this tool is it's context length (about 17.5 s
 This would requires making the model causal (currently it isn't, in order to maximize accuracy) and write an inference function that can handle this method.
 
 The [training](./training) directory contains the code used to preprocess the data and train the model.
+
+It would also be interesting to support .TextGrid files for annotations (input).
 
 
 ## Licence

@@ -2,6 +2,7 @@ import re
 import json
 import torch
 from torch import Tensor
+from pathlib import Path
 from misaki.en import G2P
 from itertools import chain
 from typing import Union, Literal, List, Tuple, Dict, Set
@@ -211,10 +212,10 @@ class TextPreprocessor:
 
 	def process_text(
 		self,
-		text_path: str,
+		text_path: Path,
 		dtype: Literal["words", "phonemes"],
 		ptype: Literal["IPA", "Misaki"]
-	) -> List[str]:
+	) -> Union[List[str], Failure]:
 		"""Process the text file and return the phonemes."""
 
 		try:
