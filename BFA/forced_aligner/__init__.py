@@ -132,6 +132,10 @@ class ForcedAligner:
 			else:
 				audio_tensor, audio_tensor_length = audio_preprocessing_result
 
+			# Get word labels if necessary
+			# Note: Reuses code from text preprocessing so don't need to check if it was successful
+			word_labels = self.text_preprocessor.get_word_labels(files["annotation"]) if dtype == "words" else None
+
 			# Predict alignments
 			alignement_scores: Union[Tensor, Failure] = self.inference_engine.inference(
 				audio_tensor,
@@ -175,7 +179,7 @@ class ForcedAligner:
 				audio_duration,
 				frame_duration,
 				output_path,
-				# to do: word_labels
+				word_labels,
 			)
 			if isinstance(export_result, Failure):
 				self.logger.error(f"Failed to export alignment to textgrid for {files['audio']}. Cause: {export_result}", extra={"hidden": True})

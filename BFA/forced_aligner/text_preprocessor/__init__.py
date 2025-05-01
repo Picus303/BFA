@@ -196,7 +196,7 @@ class TextPreprocessor:
 		return self.misaki_to_ipa_mapping.get(phoneme, phoneme)
 
 	#==================================================================
-	# Main function
+	# Main functions
 	#==================================================================
 
 	def process_misaki(self, text: str) -> Union[List[str], Failure]:
@@ -262,3 +262,23 @@ class TextPreprocessor:
 
 		except Exception as e:
 			return Failure(f"Error during text processing: {e}")
+
+
+	def get_word_labels(self, text_path: Path) -> List[str]:
+		"""Get the word labels from the text file."""
+
+		# Read the text file
+		with open(text_path, "r") as file:
+			text = file.read().strip()
+
+		if not text:
+			raise ValueError("Empty text file")
+
+		# Remove ponctuation
+		for p in self.punctuation:
+			text = text.replace(p, "")
+
+		# Split the text into words
+		words = [word for word in text.split() if word]
+
+		return words
