@@ -51,9 +51,9 @@ class TextPreprocessor:
 		
 		# Add start and end of sequence tokens
 		phonemes = [[self.special_tokens["start_of_sequence"]]] + phonemes + [[self.special_tokens["end_of_sequence"]]]
-		phonemes = list(chain.from_iterable(phonemes))
+		phonemes_chain = list(chain.from_iterable(phonemes))
 
-		return phonemes
+		return phonemes_chain
 
 	#==================================================================
 	# G2P conversion

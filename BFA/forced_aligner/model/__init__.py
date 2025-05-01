@@ -21,8 +21,8 @@ class InferenceEngine:
 
 		# Build Modules
 		self.encoder: Encoder = Encoder(build_args["encoder"])
-		self.decoder: EncoderOnlyTransformer = build_encoder_only_transformer(build_args["decoder"])
-		self.joint_network: JointNetwork = JointNetwork(build_args["joint_network"])
+		self.decoder: EncoderOnlyTransformer = build_encoder_only_transformer(**build_args["decoder"])
+		self.joint_network: JointNetwork = JointNetwork(**build_args["joint_network"])
 
 		# Load Model Weights
 		self.encoder.load_state_dict(torch.load(weights_paths["encoder"], weights_only=True))
@@ -48,13 +48,13 @@ class InferenceEngine:
 			# Build Attention Mask:
 			# This should note be necessary, but I messed up the indices for mask selection during training
 			# Because of that, the EOS token must be masked -> Will be fixed if I retrain the model
-			mask: Tensor = torch.zeros((1, text_length, text_length), device=self.device)
+			mask: Tensor = torch.zeros((1, int(text_length.item()), int(text_length.item())), device=self.device)
 			mask[:, :, :-1] = 1
 
 			# Pass Forward
-			encoder_output = encoder(spectrogram, spectrogram_length.cpu())
-			decoder_output = decoder(text, mask)
-			joint_output = joint_network(encoder_output, decoder_output)
+			encoder_output = self.encoder(spectrogram, spectrogram_length.cpu())
+			decoder_output = self.decoder(text, mask)
+			joint_output = self.joint_network(encoder_output, decoder_output)
 
 			return joint_output
 

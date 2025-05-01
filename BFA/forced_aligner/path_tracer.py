@@ -148,4 +148,4 @@ def constrained_viterbi(
         return path
 
     except Exception as e:
-        return Failure(f"Error in Constrained Viterbi: {e}", e)
+        return Failure(f"Error in Constrained Viterbi: {e}")

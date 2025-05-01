@@ -1,13 +1,13 @@
 import torch
-
 import torch.nn as nn
+from torch import Tensor
 from torch import sqrt, cos, sin, exp, log, pi
 
 
 
 class InputEmbeddings(nn.Module):
 
-	def __init__(self, vocab_size, dim):
+	def __init__(self, vocab_size: int, dim: int):
 		super().__init__()
 		self.vocab_size = vocab_size
 		self.dim = dim
@@ -21,24 +21,18 @@ class InputEmbeddings(nn.Module):
 
 class PositionalEmbeddings(nn.Module):
 
-	def __init__(self, context_length, dim):
+	def __init__(self, context_length: int, dim: int):
 		super().__init__()
-
-		if type(context_length) != torch.Tensor:
-			context_length = torch.tensor(context_length)
-
-		if type(dim) != torch.Tensor:
-			dim = torch.tensor(dim)
-
-		self.context_length = context_length
-		self.dim = dim
 
 		pos_embedding = torch.empty((context_length, dim), dtype=torch.float, requires_grad=False)
 
 		dims = torch.arange(1, dim+1, dtype=torch.float)
 		positions = torch.arange(1, context_length+1, dtype=torch.float)[:, None]
 
-		encoding_base = (2*pi) * exp(log(context_length) * -(dims/dim))
+		self.context_length = torch.tensor(context_length)
+		self.dim = torch.tensor(dim)
+
+		encoding_base = (2*pi) * exp(log(self.context_length) * -(dims/dim))
 
 		pos_embedding[0::2] = sin(positions[0::2] * encoding_base)
 		pos_embedding[1::2] = cos(positions[1::2] * encoding_base)
@@ -46,13 +40,14 @@ class PositionalEmbeddings(nn.Module):
 		self.register_buffer("pos_embedding", pos_embedding[None, :, :])
 
 	def forward(self, x):
+		self.pos_embedding: Tensor
 		context_lenght = x.size(1)
 		return x + self.pos_embedding[:, :context_lenght]
 
 
 class NormalisationLayer(nn.Module):
 
-	def __init__(self, dim, epsilon):
+	def __init__(self, dim: int, epsilon: float):
 		super().__init__()
 
 		self.layer_norm = nn.LayerNorm(dim, eps=epsilon)
@@ -142,12 +137,12 @@ class ResidualConnectionGroup(nn.Module):
 
 class EncoderBlock(nn.Module):
 
-	def __init__(self, norm_params, attention_params, feed_forward_params, dropout):
+	def __init__(self, norm_params, attention_params, feed_forward_params):
 		super().__init__()
-		self.rcg_1 = ResidualConnectionGroup(norm_params, dropout)
-		self.attn = MultiHeadAttentionBlock(*attention_params, dropout)
-		self.rcg_2 = ResidualConnectionGroup(norm_params, dropout)
-		self.ffw = FeedForwardBlock(*feed_forward_params, dropout)
+		self.rcg_1 = ResidualConnectionGroup(*norm_params)
+		self.attn = MultiHeadAttentionBlock(*attention_params)
+		self.rcg_2 = ResidualConnectionGroup(*norm_params)
+		self.ffw = FeedForwardBlock(*feed_forward_params)
 
 	def forward(self, x, mask):
 		attn_call = lambda x: self.attn(x, x, x, mask)
@@ -160,9 +155,9 @@ class EncoderBlock(nn.Module):
 
 class Encoder(nn.Module):
 
-	def __init__(self, encoder_block_count, encoder_block_params, norm_params, dropout):
+	def __init__(self, encoder_block_count, encoder_block_params, norm_params):
 		super().__init__()
-		self.encoder_blocks = nn.ModuleList([EncoderBlock(*encoder_block_params, dropout) for _ in range(encoder_block_count)])
+		self.encoder_blocks = nn.ModuleList([EncoderBlock(*encoder_block_params) for _ in range(encoder_block_count)])
 		self.norm = NormalisationLayer(*norm_params)
 
 	def forward(self, x, mask):
@@ -183,11 +178,11 @@ class ProjectionLayer(nn.Module):
 
 class EncoderOnlyTransformer(nn.Module):
 
-	def __init__(self, source_embeddings_params, positional_embeddings_params, encoder_params, projection_params, dropout):
+	def __init__(self, source_embeddings_params, positional_embeddings_params, encoder_params, projection_params):
 		super().__init__()
 		self.source_embeddings = InputEmbeddings(*source_embeddings_params)
 		self.positional_embeddings = PositionalEmbeddings(*positional_embeddings_params)
-		self.encoder = Encoder(*encoder_params, dropout)
+		self.encoder = Encoder(*encoder_params)
 		self.projection = ProjectionLayer(*projection_params)
 
 	def encode(self, x, mask):
@@ -215,19 +210,20 @@ def build_encoder_only_transformer(dropout: float,
 	positional_embeddings_params = (context_length, dim)
 
 	# Arguments for the encoder and decoder
-	encoder_params = (encoder_block_count, ((dim, epsilon),
-											(context_length, dim, encoder_self_attention_head_count, encoder_self_attention_abstraction_coef),
-											(dim, encoder_feed_forward_abstraction_coef)), (dim, epsilon))
+	encoder_params = (encoder_block_count, (((dim, epsilon), dropout),
+											(context_length, dim, encoder_self_attention_head_count, encoder_self_attention_abstraction_coef, dropout),
+											(dim, encoder_feed_forward_abstraction_coef, dropout)), (dim, epsilon))
 
 	# Arguments for the projection layer
 	projection_params = (dim, output_dim)
 
 	# Build the model
-	encoder_only_transformer = EncoderOnlyTransformer(source_embeddings_params,
+	encoder_only_transformer = EncoderOnlyTransformer(
+									source_embeddings_params,
 									positional_embeddings_params,
 									encoder_params,
-									projection_params,
-									dropout)
+									projection_params
+								)
 
 	# Initialize the weights
 	for param in encoder_only_transformer.parameters():

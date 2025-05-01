@@ -150,7 +150,7 @@ class IOManager:
 		alignment: TranslatedAlignment,
 		audio_duration: float,
 		frame_duration: float,
-		path: str,
+		path: Path,
 		word_labels: Optional[List[str]] = None
 	) -> Optional[Failure]:
 

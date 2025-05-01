@@ -3,8 +3,8 @@ from tqdm import tqdm
 from torch import Tensor
 from pathlib import Path
 from functools import partial
-from typing import Literal, List, Dict
 from multiprocessing import Pool, cpu_count
+from typing import Literal, Optional, Union, List
 
 from .model import InferenceEngine
 from .text_preprocessor import TextPreprocessor
@@ -88,7 +88,7 @@ class ForcedAligner:
 							failures += 1
 
 						# Update progress bar
-						pbar.set_postfix(f"failed alignments: {failures} | success rate: {failures/processed_files}")
+						pbar.set_postfix_str(f"failed alignments: {failures} | success rate: {failures/processed_files}")
 
 			# Log the results
 			if failures > 0:
@@ -109,7 +109,7 @@ class ForcedAligner:
 		dtype: Literal["words", "phonemes"],
 		ptype: Literal["IPA", "Misaki"],
 		out_dir: Path,
-	) -> None:
+	) -> Optional[Failure]:
 
 		# to do: allow modules to access the logger and remove all these "isinstance" checks
 
@@ -133,7 +133,7 @@ class ForcedAligner:
 				audio_tensor, audio_tensor_length = audio_preprocessing_result
 
 			# Predict alignments
-			alignement_scores: Tensor = self.inference_engine.inference(
+			alignement_scores: Union[Tensor, Failure] = self.inference_engine.inference(
 				audio_tensor,
 				phonemes_tensor,
 				audio_tensor_length,
@@ -144,16 +144,19 @@ class ForcedAligner:
 				return alignement_scores
 
 			# Trace alignment path
-			alignment_path: RawAlignment = constrained_viterbi() # to do
+			alignment_path: Union[RawAlignment, Failure] = constrained_viterbi(
+				alignement_scores,
+				phonemes_tensor[0, 1:]
+			)
 			if isinstance(alignment_path, Failure):
 				self.logger.error(f"Failed to trace alignment path for {files['audio']}. Cause: {alignment_path}", extra={"hidden": True})
 				return alignment_path
-			
+
 			# Translate aligned tokens to phonemes
 			translated_alignment: TranslatedAlignment = []
 			for t, u, emit in alignment_path:
 				if emit is not None:
-					translated_phoneme = self.text_preprocessor.detokenize(emit)
+					translated_phoneme = self.text_preprocessor.detokenize(emit, ptype)
 					if isinstance(translated_phoneme, Failure):
 						self.logger.error(f"Failed to detokenize phoneme {emit}. Cause: {translated_phoneme}", extra={"hidden": True})
 						return translated_phoneme
@@ -171,7 +174,7 @@ class ForcedAligner:
 				translated_alignment,
 				audio_duration,
 				frame_duration,
-				out_dir,
+				output_path,
 				# to do: word_labels
 			)
 			if isinstance(export_result, Failure):
@@ -180,7 +183,7 @@ class ForcedAligner:
 
 			# All steps completed successfully
 			self.logger.info(f"Alignment for {files['audio']} completed successfully.")
-			return True
+			return None
 
 		except Exception as e:
 			self.logger.error(f"Failed to align pair {files['audio']} and {files['annotation']}. Cause: {e}", extra={"hidden": True})

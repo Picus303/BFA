@@ -83,13 +83,13 @@ class Encoder(nn.Module):
 
 		sorted_lens, sorted_idx = l.sort(descending=True)
 		x = x[sorted_idx]
-		x = pack_padded_sequence(x, sorted_lens, batch_first=True, enforce_sorted=False)
+		x_seq = pack_padded_sequence(x, sorted_lens, batch_first=True, enforce_sorted=False)
 
 		h0 = self.h0.expand(-1, batch_size, -1).contiguous()
 		c0 = self.c0.expand(-1, batch_size, -1).contiguous()
 
 		x, _ = self.lstm(x, (h0, c0))	# x: (B, T, 512)
-		x, _ = pad_packed_sequence(x, batch_first=True)
+		x, _ = pad_packed_sequence(x_seq, batch_first=True)
 		_, original_idx = sorted_idx.sort()
 		x = x[original_idx]
 
