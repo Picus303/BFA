@@ -110,7 +110,9 @@ class ForcedAligner:
 		ptype: Literal["IPA", "Misaki"],
 		out_dir: Path,
 	) -> None:
-		
+
+		# to do: allow modules to access the logger and remove all these "isinstance" checks
+
 		try:
 			# Preprocess text and audio files
 			text_preprocessing_result = self.text_preprocessor.process_text(files["annotation"], dtype, ptype)
