@@ -13,14 +13,6 @@ from logging import (
 from pathlib import Path
 from typing import Optional, Union, Dict, List, Tuple, Any	
 
-PATHS = (
-	("model", "weights_paths", "encoder"),
-	("model", "weights_paths", "decoder"),
-	("model", "weights_paths", "joint_network"),
-	("tensor_preprocessor", "text", "tokenizer_path"),
-	("logger", "log_file"),
-)
-
 
 
 Failure = str
@@ -29,46 +21,27 @@ RawAlignment = List[Tuple[int, int, Optional[int]]]
 TranslatedAlignment = List[Tuple[int, int, Optional[str]]]
 
 
-def read_dict(data: dict, keys: Tuple[str, ...]) -> Union[Any, Failure]:
-	"""Access a value of a nested dictionary using a tuple of keys."""
-	for key in keys:
-		data = data[key]
-	return data
-
-
-
-def write_dict(data: dict, keys: Tuple[str, ...], value: Any) -> None:
-	"""Write a value to a nested dictionary using a tuple of keys."""
-	for key in keys[:-1]:
-		data = data[key]
-	data[keys[-1]] = value
-
-
-
 def load_cfg(cfg_path: Path, root: Path) -> Union[dict, Failure]:
 	"""Load the configuration file."""
 	try:
 		# Read the config file
-		cfg_path = root / cfg_path
 		with cfg_path.open("r") as file:
 			cfg = yaml.safe_load(file)
 
 		# Convert lists to sets
-		cfg["supported_audio_formats"] = set(cfg["supported_audio_formats"])
-		cfg["supported_annotation_formats"] = set(cfg["supported_annotation_formats"])
-		cfg["g2p_engine"]["modifiers"] = set(cfg["g2p_engine"]["modifiers"])
-		cfg["g2p_engine"]["ponctuation"] = set(cfg["g2p_engine"]["ponctuation"])
-		cfg["textgrid_writer"]["special_tokens"] = set(cfg["textgrid_writer"]["special_tokens"])
+		cfg["io_manager"]["supported_audio_formats"] = set(cfg["io_manager"]["supported_audio_formats"])
+		cfg["io_manager"]["supported_annotation_formats"] = set(cfg["io_manager"]["supported_annotation_formats"])
+		cfg["text_preprocessor"]["modifiers"] = set(cfg["text_preprocessor"]["modifiers"])
+		cfg["text_preprocessor"]["punctuation"] = set(cfg["text_preprocessor"]["punctuation"])
+		cfg["io_manager"]["special_tokens"] = set(cfg["io_manager"]["special_tokens"])
 
 		# Convert paths to absolute paths
-		for path in PATHS:
-			value = read_dict(cfg, path)
-			if isinstance(value, str):
-				abs_path = (root / value).resolve()
-				write_dict(cfg, path, str(abs_path))
-			else:
-				# Error in config file or while accessing the value
-				raise RuntimeError("Invalid path in config file")
+		cfg["inference_engine"]["weights_paths"]["encoder"] = root / cfg["inference_engine"]["weights_paths"]["encoder"]
+		cfg["inference_engine"]["weights_paths"]["decoder"] = root / cfg["inference_engine"]["weights_paths"]["decoder"]
+		cfg["inference_engine"]["weights_paths"]["joint_network"] = root / cfg["inference_engine"]["weights_paths"]["joint_network"]
+		cfg["text_preprocessor"]["tokenizer_path"] = root / cfg["text_preprocessor"]["tokenizer_path"]
+		cfg["text_preprocessor"]["ipa_mapping_path"] = root / cfg["text_preprocessor"]["ipa_mapping_path"]
+		cfg["logger"]["log_file"] = root / cfg["logger"]["log_file"]
 
 		return cfg
 
@@ -89,7 +62,7 @@ def get_logger(config: dict) -> Logger:
 	logger.setLevel(config["base_log_level"])
 
 	# Create file handler
-	file_handler = FileHandler(config["log_file"])
+	file_handler = FileHandler(config["log_file"], mode="w")
 	file_handler.setLevel(config["file_log_level"])
 
 	# Create console handler

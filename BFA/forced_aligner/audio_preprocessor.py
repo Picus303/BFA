@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Union, List, Tuple
 from torchaudio.transforms import Resample, MelSpectrogram
 
-from BFA.utils import Failure
+from ..utils import Failure
 
 
 
@@ -16,8 +16,8 @@ class AudioPreprocessor:
 		self.mel_transform = MelSpectrogram(
 			sample_rate = self.config["sample_rate"],
 			n_fft = self.config["n_fft"],
-			hop_length = self.config["hop_length"],
-			win_length = self.config["win_length"],
+			hop_length = self.config["hop_size"],
+			win_length = self.config["win_size"],
 			n_mels = self.config["n_mels"],
 			f_min = self.config["f_min"],
 			f_max = self.config["f_max"],

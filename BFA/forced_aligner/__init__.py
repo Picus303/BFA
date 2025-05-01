@@ -1,4 +1,3 @@
-import typer
 from tqdm import tqdm
 from torch import Tensor
 from pathlib import Path
@@ -11,8 +10,8 @@ from .text_preprocessor import TextPreprocessor
 from .audio_preprocessor import AudioPreprocessor
 from .path_tracer import constrained_viterbi
 
-from BFA.io import IOManager
-from BFA.utils import (
+from ..io import IOManager
+from ..utils import (
 	Failure,
 	FilePair,
 	RawAlignment,
@@ -35,9 +34,9 @@ class ForcedAligner:
 			self.io_manager = IOManager(config["io_manager"])
 
 		except Exception as e:
-			typer.echo(f"Failed to initialize Forced Aligner. Exiting...")
-			typer.echo(f"Error: {e}")
-			raise typer.Exit(code=1)
+			print(f"Failed to initialize Forced Aligner. Exiting...")
+			print(f"Error: {e}")
+			exit(code=1)
 
 		self.logger.info("Forced Aligner initialized successfully.")
 		self.logger.info(f"Language: {language}")
@@ -65,6 +64,7 @@ class ForcedAligner:
 			# Start processing in parallel
 			assert -1 <= n_jobs <= cpu_count(), "Invalid number of jobs specified."
 			n_jobs = cpu_count() if n_jobs == -1 else n_jobs
+			n_jobs = min(n_jobs, len(file_pairs))
 			with Pool(n_jobs) as pool:
 				processed_files = 0
 				failures = 0
@@ -96,11 +96,11 @@ class ForcedAligner:
 			else:
 				self.logger.info("All files were successfully aligned.")
 
-			raise typer.Exit(code=0)
+			exit(code=0)
 
 		except Exception as e:
 			self.logger.error(f"Failed to Align Corpus. Cause: {e}")
-			raise typer.Exit(code=1)
+			exit(code=1)
 
 
 	def align_pair(
@@ -112,6 +112,7 @@ class ForcedAligner:
 	) -> Optional[Failure]:
 
 		# to do: allow modules to access the logger and remove all these "isinstance" checks
+		print(f"Aligning {files['audio']} and {files['annotation']}...")
 
 		try:
 			# Preprocess text and audio files

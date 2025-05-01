@@ -1,27 +1,38 @@
-import pickle
-from typing import Dict
+# bfa/tokenizer.py
+import json
+from pathlib import Path
+from typing import Dict, Set, List, Union
+
 
 
 class Tokenizer:
-	def __init__(self, vocab, special_tokens: Dict[str, int] = {}):
-		self.vocab = vocab
-		self.char2idx = {char: idx+len(special_tokens) for idx, char in enumerate(vocab)}
-		self.idx2char = {idx+len(special_tokens): char for idx, char in enumerate(vocab)}
+	def __init__(
+		self,
+		vocab: List[str],
+		special_tokens: List[str],
+		char2idx: Dict[str, int],
+		idx2char: Dict[int, str],
+	) -> None:
 
-		for token, idx in special_tokens.items():
-			self.char2idx[token] = idx
-			self.idx2char[idx] = token
+		self.vocab: Set[str] = set(vocab)
+		self.special_tokens: Set[str] = set(special_tokens)
+		self.char2idx: Dict[str, int] = char2idx
+		self.idx2char: Dict[int, str] = idx2char
 
-	def encode(self, text):
+	def encode(self, text: List[str]) -> List[int]:
 		return [self.char2idx[char] for char in text]
 
-	def decode(self, sequence):
-		return ''.join([self.idx2char[idx] for idx in sequence])
+	def decode(self, sequence: List[int]) -> str:
+		return "".join(self.idx2char[idx] for idx in sequence)
 
+	@classmethod
+	def from_json(cls, path: Path) -> "Tokenizer":
+		with path.open("r", encoding="utf-8") as file:
+			data = json.load(file)
 
-def load_tokenizer(path: str) -> Tokenizer:
-	"""Load a tokenizer from a pickle file."""
-	with open(path, "rb") as file:
-		tokenizer = pickle.load(file)
-
-	return tokenizer
+		return cls(
+			vocab = data["vocab"],
+			special_tokens = data["special_tokens"],
+			char2idx = data["char2idx"],
+			idx2char = data["idx2char"],
+		)

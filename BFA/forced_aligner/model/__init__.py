@@ -7,7 +7,7 @@ from .encoder import Encoder
 from .decoder import EncoderOnlyTransformer, build_encoder_only_transformer
 from .joint_network import JointNetwork
 
-from BFA.utils import Failure
+from ...utils import Failure
 
 
 
@@ -20,7 +20,7 @@ class InferenceEngine:
 		weights_paths = config["weights_paths"]
 
 		# Build Modules
-		self.encoder: Encoder = Encoder(build_args["encoder"])
+		self.encoder: Encoder = Encoder(**build_args["encoder"])
 		self.decoder: EncoderOnlyTransformer = build_encoder_only_transformer(**build_args["decoder"])
 		self.joint_network: JointNetwork = JointNetwork(**build_args["joint_network"])
 

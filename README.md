@@ -41,6 +41,11 @@ bfa align \
 ```
 
 
+## Performances
+
+(to do after tests)
+
+
 ## Contributions
 
 All contributions are welcomed but my main goal is the following:

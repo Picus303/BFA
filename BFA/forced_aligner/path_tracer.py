@@ -6,7 +6,7 @@ from torch import Tensor
 import torch.nn.functional as F
 from typing import Union, List, Tuple, Optional
 
-from BFA.utils import Failure, RawAlignment
+from ..utils import Failure, RawAlignment
 
 
 

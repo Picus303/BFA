@@ -9,7 +9,7 @@ requires-python = ">=3.12"
 dependencies = [
     "torch>=2.6",
     "torchaudio>=2.6",
-    "typer[all]>=0.15",
+    "cyclopts>=3.14",
     "misaki==0.9",
     "matplotlib>=3.8"
     "tqdm>=4.66",

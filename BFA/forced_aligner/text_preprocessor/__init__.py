@@ -7,8 +7,8 @@ from misaki.en import G2P
 from itertools import chain
 from typing import Union, Literal, List, Tuple, Dict, Set
 
-from .tokenizer import Tokenizer, load_tokenizer
-from BFA.utils import Failure
+from .tokenizer import Tokenizer
+from ...utils import Failure
 
 
 
@@ -26,7 +26,7 @@ class TextPreprocessor:
 		self.punctuation = config["punctuation"]
 
 		# Load the tokenizer
-		self.tokenizer: Tokenizer = load_tokenizer(config["tokenizer_path"])
+		self.tokenizer = Tokenizer.from_json(config["tokenizer_path"])
 		self.vocab: Set[str] = set(self.tokenizer.vocab)
 
 		# Load IPA mapping

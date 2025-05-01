@@ -2,9 +2,7 @@ from pathlib import Path
 from logging import Logger
 from typing import Optional, List, Tuple, Dict
 
-from BFA.utils import Failure, TranslatedAlignment
-
-
+from .utils import Failure, TranslatedAlignment
 
 Durations = List[Tuple[str, float]]
 Intervals = List[Tuple[float, float, str]]
