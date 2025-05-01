@@ -109,10 +109,17 @@ class TextPreprocessor:
 			return Failure(f"Error during tokenization: {e}")
 
 
-	def detokenize(self, phoneme: int) -> Union[str, Failure]:
+	def detokenize(self, phoneme: int, ptype: Literal["IPA", "Misaki"]) -> Union[str, Failure]:
 		"""Convert phoneme index to string."""
 		try:
-			return self.tokenizer.decode([phoneme])
+			misaki_phoneme = self.tokenizer.decode([phoneme])
+			if ptype == "Misaki":
+				return misaki_phoneme
+			elif ptype == "IPA":
+				return self.misaki_to_ipa(misaki_phoneme)
+			else:
+				raise ValueError(f"Unknown ptype: {ptype}")
+
 		except Exception as e:
 			return Failure(f"Error during detokenization: {e}")
 
@@ -215,7 +222,7 @@ class TextPreprocessor:
 		text_path: Path,
 		dtype: Literal["words", "phonemes"],
 		ptype: Literal["IPA", "Misaki"]
-	) -> Union[List[str], Failure]:
+	) -> Union[Tuple[Tensor, Tensor], Failure]:
 		"""Process the text file and return the phonemes."""
 
 		try:
@@ -239,7 +246,7 @@ class TextPreprocessor:
 							phonemes = self.ipa_to_misaki(text)
 						case "Misaki":
 							# Extract phonemes from the text
-							phonemes = self.translate(text)
+							phonemes = self.process_misaki(text)
 						case _:
 							raise ValueError(f"Unknown ptype: {ptype}")
 
@@ -250,7 +257,8 @@ class TextPreprocessor:
 			if isinstance(phonemes, Failure):
 				raise RuntimeError(phonemes)
 
-			return phonemes
+			# Tokenize the phonemes
+			return self.tokenize(phonemes)
 
 		except Exception as e:
 			return Failure(f"Error during text processing: {e}")

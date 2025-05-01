@@ -2,6 +2,7 @@
 # If you are not absolutely sure of what you are doing, please do not modify this file.
 
 import torch
+from torch import Tensor
 import torch.nn.functional as F
 from typing import Union, List, Tuple, Optional
 
@@ -10,13 +11,13 @@ from BFA.utils import Failure, RawAlignment
 
 
 def constrained_viterbi(
-    logits: torch.Tensor,              # (T, U+1, vocab_size)
-    target: torch.Tensor,              # (U,) sequence of target token indices
+    logits: Tensor,             # (T, U+1, vocab_size)
+    target: Tensor,             # (U,) sequence of target token indices
     *,
-    blank_idx: int = 0,                # index of the blank symbol in the vocabulary
-    band_ratio: float = 0.5,           # relative width of Sakoe-Chiba band (0.0 - 1.0)
-    lambda_diag: float = 0.0,          # weight of quadratic penalty off diagonal
-) -> Union[Tuple[RawAlignment, torch.Tensor], Failure]:
+    blank_idx: int = 0,         # index of the blank symbol in the vocabulary
+    band_ratio: float = 0.5,    # relative width of Sakoe-Chiba band (0.0 - 1.0)
+    lambda_diag: float = 0.0,   # weight of quadratic penalty off diagonal
+) -> Union[RawAlignment, Failure]:
     """
     Perform a forced-alignment Viterbi decoding under Sakoe-Chiba banding
     with an optional quadratic penalty for drift from the main diagonal.
@@ -37,7 +38,6 @@ def constrained_viterbi(
         path (List[Tuple[int, int, Optional[int]]]): List of (t, u, emit) steps
             representing the optimal alignment path. 'emit' is the token index 
             or None for blank emissions.
-        best_logp (Tensor): Scalar tensor containing the log-probability of the best path.
     """
     try:
         # Retrieve dimensions
@@ -145,7 +145,7 @@ def constrained_viterbi(
             t, u = prev_t, prev_u
 
         path.reverse()
-        return path, best_logp
+        return path
 
     except Exception as e:
         return Failure(f"Error in Constrained Viterbi: {e}", e)

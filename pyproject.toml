@@ -12,7 +12,8 @@ dependencies = [
     "typer[all]>=0.15",
     "misaki==0.9",
     "matplotlib>=3.8"
-    "tqdm>=4.66"
+    "tqdm>=4.66",
+    "pyyaml>=6.0"
 ]
 
 [project.scripts]
