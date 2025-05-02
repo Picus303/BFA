@@ -1,3 +1,5 @@
+chunk_size: 32
+
 inference_engine:
     build_args:
         encoder:
@@ -15,7 +17,7 @@ inference_engine:
             encoder_self_attention_head_count: 4
             encoder_self_attention_abstraction_coef: 0.25
             encoder_feed_forward_abstraction_coef: 2.0
-            epsilon: 1e-9
+            epsilon: 1.0e-9
             dropout: 0.2
 
         joint_network:
@@ -57,6 +59,7 @@ io_manager:
     special_tokens: ["<SIL>", "<SOS>", "<EOS>"]
     supported_audio_formats: [".wav", ".mp3", ".flac", ".pcm"]
     supported_annotation_formats: [".txt", ".lab"]
+    output_format: ".TextGrid"
 
 
 logger:

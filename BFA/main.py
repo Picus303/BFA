@@ -1,4 +1,3 @@
-# align_cli.py
 from pathlib import Path
 from typing import Literal, Annotated
 

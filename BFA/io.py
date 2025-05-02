@@ -2,7 +2,7 @@ from pathlib import Path
 from logging import Logger
 from typing import Optional, List, Tuple, Dict
 
-from .utils import Failure, TranslatedAlignment
+from .utils import Failure, FilePair, TranslatedAlignment
 
 Durations = List[Tuple[str, float]]
 Intervals = List[Tuple[float, float, str]]
@@ -13,10 +13,11 @@ class IOManager:
 		self.config = config
 
 
-	def get_pairs(self, audio_dir: Path, text_dir: Path) -> Tuple[List[Dict[str, Path]], int, int]:
+	def get_pairs(self, audio_dir: Path, text_dir: Path, out_dir: Path) -> Tuple[List[FilePair], int, int]:
 		"""
 		Recursively traverses audio_dir and text_dir, and constructs the list of
 		audio/annotation pairs based on the relative structure and supported extensions.
+		It also produces the output path for each pair.
 
 		Also returns the numbers of file that couldn't be paired.
 		"""
@@ -46,7 +47,7 @@ class IOManager:
 
 		# Building the list of pairs
 		pairs = [
-			{"audio": audio_map[k], "annotation": text_map[k]}
+			{"audio": audio_map[k], "annotation": text_map[k], "output": out_dir / k.with_suffix(self.config["output_format"])}
 			for k in sorted(common_keys)
 		]
 

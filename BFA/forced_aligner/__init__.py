@@ -1,3 +1,4 @@
+import torch
 from tqdm import tqdm
 from torch import Tensor
 from pathlib import Path
@@ -19,6 +20,9 @@ from ..utils import (
 	get_logger
 )
 
+# For thread safety, prevent pytorch from using multiple threads
+torch.set_num_threads(1)
+torch.set_num_interop_threads(1)
 
 
 class ForcedAligner:
@@ -51,7 +55,7 @@ class ForcedAligner:
 
 		try:
 			# Find audio/annotation pairs
-			file_pairs, unpaired_audios, unpaired_texts = self.io_manager.get_pairs(audio_dir, text_dir)
+			file_pairs, unpaired_audios, unpaired_texts = self.io_manager.get_pairs(audio_dir, text_dir, out_dir)
 			file_pairs: List[FilePair]
 
 			if (unpaired_audios > 0) or (unpaired_texts > 0):
@@ -77,7 +81,7 @@ class ForcedAligner:
 					out_dir = out_dir,
 				)
 
-				generator = pool.imap(align_pair_partial, file_pairs)
+				generator = pool.imap(align_pair_partial, file_pairs, chunksize=self.config["chunk_size"])
 
 				# Wait for results
 				with tqdm(generator, total=len(file_pairs)) as pbar:
@@ -88,7 +92,7 @@ class ForcedAligner:
 							failures += 1
 
 						# Update progress bar
-						pbar.set_postfix_str(f"failed alignments: {failures} | success rate: {failures/processed_files}")
+						pbar.set_postfix_str(f"failed alignments: {failures} | success rate: {100 * (1 - failures/processed_files)}%")
 
 			# Log the results
 			if failures > 0:
@@ -112,7 +116,6 @@ class ForcedAligner:
 	) -> Optional[Failure]:
 
 		# to do: allow modules to access the logger and remove all these "isinstance" checks
-		print(f"Aligning {files['audio']} and {files['annotation']}...")
 
 		try:
 			# Preprocess text and audio files
@@ -131,7 +134,7 @@ class ForcedAligner:
 				self.logger.error(f"Failed to process audio file {files['audio']}. Cause: {audio_preprocessing_result}", extra={"hidden": True})
 				return audio_preprocessing_result
 			else:
-				audio_tensor, audio_tensor_length = audio_preprocessing_result
+				audio_tensor, audio_tensor_length, audio_duration = audio_preprocessing_result
 
 			# Get word labels if necessary
 			# Note: Reuses code from text preprocessing so don't need to check if it was successful
@@ -150,12 +153,14 @@ class ForcedAligner:
 
 			# Trace alignment path
 			alignment_path: Union[RawAlignment, Failure] = constrained_viterbi(
-				alignement_scores,
+				alignement_scores[0],
 				phonemes_tensor[0, 1:]
 			)
 			if isinstance(alignment_path, Failure):
 				self.logger.error(f"Failed to trace alignment path for {files['audio']}. Cause: {alignment_path}", extra={"hidden": True})
 				return alignment_path
+
+			# to do: move this to the text preprocessor
 
 			# Translate aligned tokens to phonemes
 			translated_alignment: TranslatedAlignment = []
@@ -171,15 +176,13 @@ class ForcedAligner:
 					translated_alignment.append((t, u, None))
 
 			# Save the alignment to textgrid
-			frame_duration = 1 / self.config["audio_preprocessor"]["sample_rate"]
-			audio_duration = audio_tensor_length.item() * frame_duration
-			output_path = out_dir / (files["audio"].stem + ".TextGrid")
+			frame_duration = self.audio_preprocessor.frame_duration
 
 			export_result = self.io_manager.alignment_to_textgrid(
 				translated_alignment,
 				audio_duration,
 				frame_duration,
-				output_path,
+				files["output"],
 				word_labels,
 			)
 			if isinstance(export_result, Failure):

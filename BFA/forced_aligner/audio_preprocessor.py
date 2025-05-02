@@ -2,7 +2,7 @@ import torch
 import torchaudio
 from torch import Tensor
 from pathlib import Path
-from typing import Union, List, Tuple
+from typing import Union, Tuple
 from torchaudio.transforms import Resample, MelSpectrogram
 
 from ..utils import Failure
@@ -24,9 +24,10 @@ class AudioPreprocessor:
 		)
 
 		self.sample_rate: int = self.config["sample_rate"]
+		self.frame_duration: float = self.config["hop_size"] / self.config["sample_rate"]
 
 
-	def process_audio(self, audio_path: Path) -> Union[Tuple[Tensor, Tensor], Failure]:
+	def process_audio(self, audio_path: Path) -> Union[Tuple[Tensor, Tensor, float], Failure]:
 		try:
 			# Load, resample and normalize the audio
 			audio, sample_rate = torchaudio.load(audio_path)
@@ -43,7 +44,10 @@ class AudioPreprocessor:
 			mel = mel.transpose(-1, -2).unsqueeze(1)							# Convert to (batch, channel, time, frequency)
 			l_mel = torch.tensor(mel.shape[2], dtype=torch.int32).unsqueeze(0)	# Length of the mel spectrogram
 
-			return mel, l_mel
+			# Calculate audio duration
+			audio_duration: float = audio.shape[1] / self.sample_rate	# Duration in seconds
+
+			return mel, l_mel, audio_duration
 
 		except Exception as e:
 			return Failure(f"Error during audio processing: {e}")

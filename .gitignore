@@ -8,3 +8,5 @@ build/
 # Temporary files
 *temp*
 temp/
+out/
+*.log

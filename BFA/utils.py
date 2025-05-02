@@ -15,7 +15,10 @@ from typing import Optional, Union, Dict, List, Tuple, Any
 
 
 
-Failure = str
+class Failure(str):
+	pass
+
+
 FilePair = Dict[str, Path]
 RawAlignment = List[Tuple[int, int, Optional[int]]]
 TranslatedAlignment = List[Tuple[int, int, Optional[str]]]

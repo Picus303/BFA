@@ -49,7 +49,6 @@ class NormalisationLayer(nn.Module):
 
 	def __init__(self, dim: int, epsilon: float):
 		super().__init__()
-
 		self.layer_norm = nn.LayerNorm(dim, eps=epsilon)
 
 	def forward(self, x):

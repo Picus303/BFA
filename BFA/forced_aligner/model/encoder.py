@@ -88,7 +88,7 @@ class Encoder(nn.Module):
 		h0 = self.h0.expand(-1, batch_size, -1).contiguous()
 		c0 = self.c0.expand(-1, batch_size, -1).contiguous()
 
-		x, _ = self.lstm(x, (h0, c0))	# x: (B, T, 512)
+		x_seq, _ = self.lstm(x_seq, (h0, c0))	# x: (B, T, 512)
 		x, _ = pad_packed_sequence(x_seq, batch_first=True)
 		_, original_idx = sorted_idx.sort()
 		x = x[original_idx]

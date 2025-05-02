@@ -11,19 +11,19 @@ class Tokenizer:
 		vocab: List[str],
 		special_tokens: List[str],
 		char2idx: Dict[str, int],
-		idx2char: Dict[int, str],
+		idx2char: Dict[str, str],
 	) -> None:
 
 		self.vocab: Set[str] = set(vocab)
 		self.special_tokens: Set[str] = set(special_tokens)
 		self.char2idx: Dict[str, int] = char2idx
-		self.idx2char: Dict[int, str] = idx2char
+		self.idx2char: Dict[str, str] = idx2char
 
 	def encode(self, text: List[str]) -> List[int]:
 		return [self.char2idx[char] for char in text]
 
 	def decode(self, sequence: List[int]) -> str:
-		return "".join(self.idx2char[idx] for idx in sequence)
+		return "".join(self.idx2char[str(idx)] for idx in sequence)
 
 	@classmethod
 	def from_json(cls, path: Path) -> "Tokenizer":
