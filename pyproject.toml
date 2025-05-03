@@ -4,6 +4,7 @@ version     = "0.1.0"
 description = "CLI tool for RNN-T based text/audio forced alignment."
 authors     = [{name="Picus303", email="pilleurc@protonmail.com"}]
 readme      = "README.md"
+license     = "MIT"
 
 requires-python = ">=3.12"
 dependencies = [
