@@ -1,0 +1,752 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+xmin = 0
+xmax = 15.330000
+tiers? <exists>
+size = 2
+item []:
+    item [1]:
+        class = "IntervalTier"
+        name = "phones"
+        xmin = 0
+        xmax = 15.330000
+        intervals: size = 153
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.304000
+            text = "<SOS>"
+        intervals [2]:
+            xmin = 0.304000
+            xmax = 0.336000
+            text = "ʧ"
+        intervals [3]:
+            xmin = 0.336000
+            xmax = 0.416000
+            text = "a"
+        intervals [4]:
+            xmin = 0.416000
+            xmax = 0.448000
+            text = "p"
+        intervals [5]:
+            xmin = 0.448000
+            xmax = 0.608000
+            text = "t"
+        intervals [6]:
+            xmin = 0.608000
+            xmax = 0.688000
+            text = "ə"
+        intervals [7]:
+            xmin = 0.688000
+            xmax = 0.912000
+            text = "<SIL>"
+        intervals [8]:
+            xmin = 0.912000
+            xmax = 0.992000
+            text = "ɪ"
+        intervals [9]:
+            xmin = 0.992000
+            xmax = 1.152000
+            text = "l"
+        intervals [10]:
+            xmin = 1.152000
+            xmax = 1.232000
+            text = "ɛ"
+        intervals [11]:
+            xmin = 1.232000
+            xmax = 1.344000
+            text = "v"
+        intervals [12]:
+            xmin = 1.344000
+            xmax = 1.424000
+            text = "n"
+        intervals [13]:
+            xmin = 1.424000
+            xmax = 6.048000
+            text = "<SIL>"
+        intervals [14]:
+            xmin = 6.048000
+            xmax = 6.064000
+            text = "ð"
+        intervals [15]:
+            xmin = 6.064000
+            xmax = 6.096000
+            text = "ə"
+        intervals [16]:
+            xmin = 6.096000
+            xmax = 6.192000
+            text = "<SIL>"
+        intervals [17]:
+            xmin = 6.192000
+            xmax = 6.224000
+            text = "m"
+        intervals [18]:
+            xmin = 6.224000
+            xmax = 6.352000
+            text = "ɒ"
+        intervals [19]:
+            xmin = 6.352000
+            xmax = 6.432000
+            text = "ɹ"
+        intervals [20]:
+            xmin = 6.432000
+            xmax = 6.496000
+            text = "Q"
+        intervals [21]:
+            xmin = 6.496000
+            xmax = 6.640000
+            text = "<SIL>"
+        intervals [22]:
+            xmin = 6.640000
+            xmax = 6.656000
+            text = "b"
+        intervals [23]:
+            xmin = 6.656000
+            xmax = 6.688000
+            text = "ɹ"
+        intervals [24]:
+            xmin = 6.688000
+            xmax = 6.752000
+            text = "ɔ"
+        intervals [25]:
+            xmin = 6.752000
+            xmax = 6.760000
+            text = "t"
+        intervals [26]:
+            xmin = 6.760000
+            xmax = 6.800000
+            text = "<SIL>"
+        intervals [27]:
+            xmin = 6.800000
+            xmax = 6.832000
+            text = "ɐ"
+        intervals [28]:
+            xmin = 6.832000
+            xmax = 6.896000
+            text = "<SIL>"
+        intervals [29]:
+            xmin = 6.896000
+            xmax = 6.944000
+            text = "v"
+        intervals [30]:
+            xmin = 6.944000
+            xmax = 7.008000
+            text = "ɛ"
+        intervals [31]:
+            xmin = 7.008000
+            xmax = 7.056000
+            text = "ɹ"
+        intervals [32]:
+            xmin = 7.056000
+            xmax = 7.088000
+            text = "i"
+        intervals [33]:
+            xmin = 7.088000
+            xmax = 7.296000
+            text = "<SIL>"
+        intervals [34]:
+            xmin = 7.296000
+            xmax = 7.312000
+            text = "s"
+        intervals [35]:
+            xmin = 7.312000
+            xmax = 7.408000
+            text = "Q"
+        intervals [36]:
+            xmin = 7.408000
+            xmax = 7.488000
+            text = "b"
+        intervals [37]:
+            xmin = 7.488000
+            xmax = 7.504000
+            text = "ə"
+        intervals [38]:
+            xmin = 7.504000
+            xmax = 7.616000
+            text = "<SIL>"
+        intervals [39]:
+            xmin = 7.616000
+            xmax = 7.632000
+            text = "l"
+        intervals [40]:
+            xmin = 7.632000
+            xmax = 7.664000
+            text = "ʊ"
+        intervals [41]:
+            xmin = 7.664000
+            xmax = 7.760000
+            text = "k"
+        intervals [42]:
+            xmin = 7.760000
+            xmax = 7.808000
+            text = "ɪ"
+        intervals [43]:
+            xmin = 7.808000
+            xmax = 7.824000
+            text = "ŋ"
+        intervals [44]:
+            xmin = 7.824000
+            xmax = 7.952000
+            text = "<SIL>"
+        intervals [45]:
+            xmin = 7.952000
+            xmax = 7.984000
+            text = "m"
+        intervals [46]:
+            xmin = 7.984000
+            xmax = 8.096000
+            text = "ɔ"
+        intervals [47]:
+            xmin = 8.096000
+            xmax = 8.176000
+            text = "n"
+        intervals [48]:
+            xmin = 8.176000
+            xmax = 8.240000
+            text = "ɪ"
+        intervals [49]:
+            xmin = 8.240000
+            xmax = 8.256000
+            text = "ŋ"
+        intervals [50]:
+            xmin = 8.256000
+            xmax = 8.816000
+            text = "<SIL>"
+        intervals [51]:
+            xmin = 8.816000
+            xmax = 8.832000
+            text = "ð"
+        intervals [52]:
+            xmin = 8.832000
+            xmax = 8.864000
+            text = "ə"
+        intervals [53]:
+            xmin = 8.864000
+            xmax = 8.976000
+            text = "<SIL>"
+        intervals [54]:
+            xmin = 8.976000
+            xmax = 8.992000
+            text = "s"
+        intervals [55]:
+            xmin = 8.992000
+            xmax = 9.072000
+            text = "ʌ"
+        intervals [56]:
+            xmin = 9.072000
+            xmax = 9.080000
+            text = "n"
+        intervals [57]:
+            xmin = 9.080000
+            xmax = 9.184000
+            text = "<SIL>"
+        intervals [58]:
+            xmin = 9.184000
+            xmax = 9.200000
+            text = "m"
+        intervals [59]:
+            xmin = 9.200000
+            xmax = 9.248000
+            text = "A"
+        intervals [60]:
+            xmin = 9.248000
+            xmax = 9.360000
+            text = "k"
+        intervals [61]:
+            xmin = 9.360000
+            xmax = 9.392000
+            text = "ɪ"
+        intervals [62]:
+            xmin = 9.392000
+            xmax = 9.408000
+            text = "ŋ"
+        intervals [63]:
+            xmin = 9.408000
+            xmax = 9.472000
+            text = "<SIL>"
+        intervals [64]:
+            xmin = 9.472000
+            xmax = 9.552000
+            text = "Q"
+        intervals [65]:
+            xmin = 9.552000
+            xmax = 9.568000
+            text = "n"
+        intervals [66]:
+            xmin = 9.568000
+            xmax = 9.632000
+            text = "l"
+        intervals [67]:
+            xmin = 9.632000
+            xmax = 9.664000
+            text = "i"
+        intervals [68]:
+            xmin = 9.664000
+            xmax = 9.680000
+            text = "<SIL>"
+        intervals [69]:
+            xmin = 9.680000
+            xmax = 9.712000
+            text = "ɐ"
+        intervals [70]:
+            xmin = 9.712000
+            xmax = 9.840000
+            text = "<SIL>"
+        intervals [71]:
+            xmin = 9.840000
+            xmax = 9.848000
+            text = "f"
+        intervals [72]:
+            xmin = 9.848000
+            xmax = 9.856000
+            text = "j"
+        intervals [73]:
+            xmin = 9.856000
+            xmax = 9.920000
+            text = "u"
+        intervals [74]:
+            xmin = 9.920000
+            xmax = 10.000000
+            text = "<SIL>"
+        intervals [75]:
+            xmin = 10.000000
+            xmax = 10.080000
+            text = "ɛ"
+        intervals [76]:
+            xmin = 10.080000
+            xmax = 10.192000
+            text = "f"
+        intervals [77]:
+            xmin = 10.192000
+            xmax = 10.256000
+            text = "ə"
+        intervals [78]:
+            xmin = 10.256000
+            xmax = 10.272000
+            text = "t"
+        intervals [79]:
+            xmin = 10.272000
+            xmax = 10.288000
+            text = "s"
+        intervals [80]:
+            xmin = 10.288000
+            xmax = 10.464000
+            text = "<SIL>"
+        intervals [81]:
+            xmin = 10.464000
+            xmax = 10.480000
+            text = "t"
+        intervals [82]:
+            xmin = 10.480000
+            xmax = 10.512000
+            text = "ʊ"
+        intervals [83]:
+            xmin = 10.512000
+            xmax = 10.544000
+            text = "<SIL>"
+        intervals [84]:
+            xmin = 10.544000
+            xmax = 10.624000
+            text = "ə"
+        intervals [85]:
+            xmin = 10.624000
+            xmax = 10.752000
+            text = "p"
+        intervals [86]:
+            xmin = 10.752000
+            xmax = 10.848000
+            text = "ɪ"
+        intervals [87]:
+            xmin = 10.848000
+            xmax = 10.976000
+            text = "ə"
+        intervals [88]:
+            xmin = 10.976000
+            xmax = 11.424000
+            text = "<SIL>"
+        intervals [89]:
+            xmin = 11.424000
+            xmax = 11.429330
+            text = "a"
+        intervals [90]:
+            xmin = 11.429330
+            xmax = 11.434660
+            text = "n"
+        intervals [91]:
+            xmin = 11.434660
+            xmax = 11.487990
+            text = "d"
+        intervals [92]:
+            xmin = 11.487990
+            xmax = 11.615990
+            text = "<SIL>"
+        intervals [93]:
+            xmin = 11.615990
+            xmax = 11.621320
+            text = "s"
+        intervals [94]:
+            xmin = 11.621320
+            xmax = 11.626650
+            text = "i"
+        intervals [95]:
+            xmin = 11.626650
+            xmax = 11.823980
+            text = "A"
+        intervals [96]:
+            xmin = 11.823980
+            xmax = 11.855980
+            text = "t"
+        intervals [97]:
+            xmin = 11.855980
+            xmax = 11.859180
+            text = "i"
+        intervals [98]:
+            xmin = 11.859180
+            xmax = 11.862380
+            text = "A"
+        intervals [99]:
+            xmin = 11.862380
+            xmax = 11.865580
+            text = "ʧ"
+        intervals [100]:
+            xmin = 11.865580
+            xmax = 11.868780
+            text = "i"
+        intervals [101]:
+            xmin = 11.868780
+            xmax = 11.887980
+            text = "ɑ"
+        intervals [102]:
+            xmin = 11.887980
+            xmax = 12.015980
+            text = "I"
+        intervals [103]:
+            xmin = 12.015980
+            xmax = 12.023980
+            text = "ɛ"
+        intervals [104]:
+            xmin = 12.023980
+            xmax = 12.031980
+            text = "n"
+        intervals [105]:
+            xmin = 12.031980
+            xmax = 12.039980
+            text = "i"
+        intervals [106]:
+            xmin = 12.039980
+            xmax = 12.095980
+            text = "<SIL>"
+        intervals [107]:
+            xmin = 12.095980
+            xmax = 12.175980
+            text = "ɔ"
+        intervals [108]:
+            xmin = 12.175980
+            xmax = 12.319980
+            text = "ɡ"
+        intervals [109]:
+            xmin = 12.319980
+            xmax = 12.367980
+            text = "ə"
+        intervals [110]:
+            xmin = 12.367980
+            xmax = 12.375980
+            text = "d"
+        intervals [111]:
+            xmin = 12.375980
+            xmax = 12.479980
+            text = "<SIL>"
+        intervals [112]:
+            xmin = 12.479980
+            xmax = 12.495980
+            text = "f"
+        intervals [113]:
+            xmin = 12.495980
+            xmax = 12.511980
+            text = "ɹ"
+        intervals [114]:
+            xmin = 12.511980
+            xmax = 12.575980
+            text = "ɒ"
+        intervals [115]:
+            xmin = 12.575980
+            xmax = 12.583980
+            text = "m"
+        intervals [116]:
+            xmin = 12.583980
+            xmax = 12.639980
+            text = "<SIL>"
+        intervals [117]:
+            xmin = 12.639980
+            xmax = 12.671980
+            text = "ɪ"
+        intervals [118]:
+            xmin = 12.671980
+            xmax = 12.679980
+            text = "t"
+        intervals [119]:
+            xmin = 12.679980
+            xmax = 12.815980
+            text = "<SIL>"
+        intervals [120]:
+            xmin = 12.815980
+            xmax = 12.895980
+            text = "ɛ"
+        intervals [121]:
+            xmin = 12.895980
+            xmax = 12.943980
+            text = "v"
+        intervals [122]:
+            xmin = 12.943980
+            xmax = 12.975980
+            text = "ɹ"
+        intervals [123]:
+            xmin = 12.975980
+            xmax = 13.039980
+            text = "ɪ"
+        intervals [124]:
+            xmin = 13.039980
+            xmax = 13.135980
+            text = "θ"
+        intervals [125]:
+            xmin = 13.135980
+            xmax = 13.183980
+            text = "ɪ"
+        intervals [126]:
+            xmin = 13.183980
+            xmax = 13.199980
+            text = "ŋ"
+        intervals [127]:
+            xmin = 13.199980
+            xmax = 13.295980
+            text = "<SIL>"
+        intervals [128]:
+            xmin = 13.295980
+            xmax = 13.303980
+            text = "m"
+        intervals [129]:
+            xmin = 13.303980
+            xmax = 13.359980
+            text = "Q"
+        intervals [130]:
+            xmin = 13.359980
+            xmax = 13.375980
+            text = "s"
+        intervals [131]:
+            xmin = 13.375980
+            xmax = 13.383980
+            text = "t"
+        intervals [132]:
+            xmin = 13.383980
+            xmax = 13.535980
+            text = "<SIL>"
+        intervals [133]:
+            xmin = 13.535980
+            xmax = 13.551980
+            text = "f"
+        intervals [134]:
+            xmin = 13.551980
+            xmax = 13.663980
+            text = "A"
+        intervals [135]:
+            xmin = 13.663980
+            xmax = 13.759980
+            text = "v"
+        intervals [136]:
+            xmin = 13.759980
+            xmax = 13.767980
+            text = "ə"
+        intervals [137]:
+            xmin = 13.767980
+            xmax = 13.791980
+            text = "ɹ"
+        intervals [138]:
+            xmin = 13.791980
+            xmax = 13.839980
+            text = "ə"
+        intervals [139]:
+            xmin = 13.839980
+            xmax = 13.919980
+            text = "b"
+        intervals [140]:
+            xmin = 13.919980
+            xmax = 13.967980
+            text = "l"
+        intervals [141]:
+            xmin = 13.967980
+            xmax = 14.079980
+            text = "<SIL>"
+        intervals [142]:
+            xmin = 14.079980
+            xmax = 14.095980
+            text = "t"
+        intervals [143]:
+            xmin = 14.095980
+            xmax = 14.143980
+            text = "ə"
+        intervals [144]:
+            xmin = 14.143980
+            xmax = 14.239980
+            text = "<SIL>"
+        intervals [145]:
+            xmin = 14.239980
+            xmax = 14.255980
+            text = "h"
+        intervals [146]:
+            xmin = 14.255980
+            xmax = 14.303980
+            text = "ɜ"
+        intervals [147]:
+            xmin = 14.303980
+            xmax = 14.383980
+            text = "<SIL>"
+        intervals [148]:
+            xmin = 14.383980
+            xmax = 14.399980
+            text = "w"
+        intervals [149]:
+            xmin = 14.399980
+            xmax = 14.463980
+            text = "ɪ"
+        intervals [150]:
+            xmin = 14.463980
+            xmax = 14.575980
+            text = "ʃ"
+        intervals [151]:
+            xmin = 14.575980
+            xmax = 14.703980
+            text = "ɪ"
+        intervals [152]:
+            xmin = 14.703980
+            xmax = 14.711980
+            text = "z"
+        intervals [153]:
+            xmin = 14.711980
+            xmax = 15.330000
+            text = "<EOS>"
+    item [2]:
+        class = "IntervalTier"
+        name = "words"
+        xmin = 0
+        xmax = 15.330000
+        intervals: size = 30
+        intervals [1]:
+            xmin = 0.304000
+            xmax = 0.688000
+            text = "ʧaptə"
+        intervals [2]:
+            xmin = 0.912000
+            xmax = 1.424000
+            text = "ɪlɛvn"
+        intervals [3]:
+            xmin = 6.048000
+            xmax = 6.096000
+            text = "ðə"
+        intervals [4]:
+            xmin = 6.192000
+            xmax = 6.496000
+            text = "mɒɹQ"
+        intervals [5]:
+            xmin = 6.640000
+            xmax = 6.760000
+            text = "bɹɔt"
+        intervals [6]:
+            xmin = 6.800000
+            xmax = 6.832000
+            text = "ɐ"
+        intervals [7]:
+            xmin = 6.896000
+            xmax = 7.088000
+            text = "vɛɹi"
+        intervals [8]:
+            xmin = 7.296000
+            xmax = 7.504000
+            text = "sQbə"
+        intervals [9]:
+            xmin = 7.616000
+            xmax = 7.824000
+            text = "lʊkɪŋ"
+        intervals [10]:
+            xmin = 7.952000
+            xmax = 8.256000
+            text = "mɔnɪŋ"
+        intervals [11]:
+            xmin = 8.816000
+            xmax = 8.864000
+            text = "ðə"
+        intervals [12]:
+            xmin = 8.976000
+            xmax = 9.080000
+            text = "sʌn"
+        intervals [13]:
+            xmin = 9.184000
+            xmax = 9.408000
+            text = "mAkɪŋ"
+        intervals [14]:
+            xmin = 9.472000
+            xmax = 9.664000
+            text = "Qnli"
+        intervals [15]:
+            xmin = 9.680000
+            xmax = 9.712000
+            text = "ɐ"
+        intervals [16]:
+            xmin = 9.840000
+            xmax = 9.920000
+            text = "fju"
+        intervals [17]:
+            xmin = 10.000000
+            xmax = 10.288000
+            text = "ɛfəts"
+        intervals [18]:
+            xmin = 10.464000
+            xmax = 10.512000
+            text = "tʊ"
+        intervals [19]:
+            xmin = 10.544000
+            xmax = 10.976000
+            text = "əpɪə"
+        intervals [20]:
+            xmin = 11.424000
+            xmax = 11.487990
+            text = "and"
+        intervals [21]:
+            xmin = 11.615990
+            xmax = 12.039980
+            text = "siAtiAʧiɑIɛni"
+        intervals [22]:
+            xmin = 12.095980
+            xmax = 12.375980
+            text = "ɔɡəd"
+        intervals [23]:
+            xmin = 12.479980
+            xmax = 12.583980
+            text = "fɹɒm"
+        intervals [24]:
+            xmin = 12.639980
+            xmax = 12.679980
+            text = "ɪt"
+        intervals [25]:
+            xmin = 12.815980
+            xmax = 13.199980
+            text = "ɛvɹɪθɪŋ"
+        intervals [26]:
+            xmin = 13.295980
+            xmax = 13.383980
+            text = "mQst"
+        intervals [27]:
+            xmin = 13.535980
+            xmax = 13.967980
+            text = "fAvəɹəbl"
+        intervals [28]:
+            xmin = 14.079980
+            xmax = 14.143980
+            text = "tə"
+        intervals [29]:
+            xmin = 14.239980
+            xmax = 14.303980
+            text = "hɜ"
+        intervals [30]:
+            xmin = 14.383980
+            xmax = 14.711980
+            text = "wɪʃɪz"

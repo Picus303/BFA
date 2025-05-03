@@ -92,7 +92,7 @@ class ForcedAligner:
 							failures += 1
 
 						# Update progress bar
-						pbar.set_postfix_str(f"failed alignments: {failures} | success rate: {100 * (1 - failures/processed_files)}%")
+						pbar.set_postfix_str(f"failed alignments: {failures} | success rate: {(100 * (1 - failures/processed_files)):.2f}%")
 
 			# Log the results
 			if failures > 0:

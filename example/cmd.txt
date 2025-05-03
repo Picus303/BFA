@@ -1,0 +1,5 @@
+usage example without installation:
+python -m BFA.main align --audio-dir ./example/audio --text-dir ./example/text --out-dir ./example/out --dtype phonemes --ptype Misaki
+
+usage example with installation:
+BFA align --audio-dir ./example/audio --text-dir ./example/text --out-dir ./example/out --dtype phonemes --ptype Misaki

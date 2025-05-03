@@ -14,7 +14,7 @@ The current architecture only supports audio clips up to about 17.5 seconds (see
 ## Installation
 
 ```bash
-pip install bfa
+pip install BFA
 ```
 
 **Requires Python ≥ 3.12**
@@ -30,7 +30,7 @@ You can find examples of such files in the [example](./examples) directory of th
 A recursive search will be used so **the only constraint is that both directories uses the same structure**. If you use the same directory for both, then your .wav and .lab pairs should be in the same sub-directory.
 
 ```bash
-bfa align \
+BFA align \
   --audio-dir /path/to/audio_dir \
   --text-dir /path/to/text_dir \
   --out-dir /path/to/out_dir \
@@ -43,7 +43,9 @@ bfa align \
 
 ## Performances
 
-(to do after tests)
+Aligning the **460 hours** of audio of the LibriSpeech dataset took **2 hours (realtime factor: x230)** on a **8 cores / 16 threads CPU**. Realtime factor on one core: x14.4.
+It uses up to **1.6Go of RAM per thread** (average: 1.4Go) and a **maximum of 23Go** during this test.
+It **successfully aligned** more than **99%** of the files.
 
 
 ## Contributions
