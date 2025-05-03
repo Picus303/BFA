@@ -1,11 +1,11 @@
 # BFA Forced-Aligner (Text/Phoneme/Audio Alignment)
 
-A CLI Python tool for text/audio alignment at word and phoneme level.
-It supports both **textual and phonetic input** using either the [IPA](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet) and [Misaki](https://github.com/hexgrad/misaki) phonesets.
-The integrated G2P model supports both **british and american English**.
+A CLI Python tool for text/audio alignment at word and phoneme level.<br />
+It supports both **textual and phonetic input** using either the [IPA](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet) and [Misaki](https://github.com/hexgrad/misaki) phonesets.<br />
+The integrated G2P model supports both **british and american English**.<br />
 The final alignments are output in [**TextGrid**](https://www.fon.hum.uva.nl/praat/manual/TextGrid_file_formats.html) format.
 
-It's based on a RNN-T model (CNN/LSTM encoder + Transformer decoder) and was trained on 460 hours of audio from the [LibriSpeech dataset](https://www.openslr.org/12).
+It's based on a RNN-T model (CNN/LSTM encoder + Transformer decoder) and was trained on 460 hours of audio from the [LibriSpeech dataset](https://www.openslr.org/12).<br />
 The current architecture only supports audio clips up to about 17.5 seconds (see [contributions](#Contributions)).
 
 **No GPU is required to run this tool**, but a CPU with lots of cores can help.
@@ -43,9 +43,9 @@ BFA align \
 
 ## Performances
 
-Aligning the **460 hours** of audio of the LibriSpeech dataset took **2 hours (realtime factor: x230)** on a **8 cores / 16 threads CPU**. Realtime factor on one core: x14.4.
-It uses up to **1.6Go of RAM per thread** (average: 1.4Go) and a **maximum of 23Go** during this test.
-It **successfully aligned** more than **99%** of the files.
+Aligning the **460 hours** of audio of the LibriSpeech dataset took **2 hours (realtime factor: x230)** on a **8 cores / 16 threads CPU**. Realtime factor on one core: x14.4.<br />
+It uses up to **1.6Go of RAM per thread** (average: 1.4Go) and a **maximum of 23Go** during this test.<br />
+It **successfully aligned** more than **99%** of the files.<br />
 
 
 ## Contributions
