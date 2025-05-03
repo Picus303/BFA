@@ -8,7 +8,7 @@ from itertools import chain
 from typing import Union, Literal, List, Tuple, Dict, Set
 
 from .tokenizer import Tokenizer
-from ...utils import Failure
+from ...utils import Failure, RawAlignment, TranslatedAlignment
 
 
 
@@ -109,16 +109,28 @@ class TextPreprocessor:
 			return Failure(f"Error during tokenization: {e}")
 
 
-	def detokenize(self, phoneme: int, ptype: Literal["IPA", "Misaki"]) -> Union[str, Failure]:
+	def detokenize(self, phoneme: int, ptype: Literal["IPA", "Misaki"]) -> str:
 		"""Convert phoneme index to string."""
+		misaki_phoneme = self.tokenizer.decode([phoneme])
+		if ptype == "Misaki":
+			return misaki_phoneme
+		elif ptype == "IPA":
+			return self.misaki_to_ipa(misaki_phoneme)
+		else:
+			raise ValueError(f"Unknown ptype: {ptype}")
+
+
+	def detokenize_alignment(self, raw_alignment: RawAlignment, ptype: Literal["IPA", "Misaki"]) -> Union[TranslatedAlignment, Failure]:
 		try:
-			misaki_phoneme = self.tokenizer.decode([phoneme])
-			if ptype == "Misaki":
-				return misaki_phoneme
-			elif ptype == "IPA":
-				return self.misaki_to_ipa(misaki_phoneme)
-			else:
-				raise ValueError(f"Unknown ptype: {ptype}")
+			translated_alignment: TranslatedAlignment = []
+			for t, u, emit in raw_alignment:
+				if emit is not None:
+					translated_phoneme = self.detokenize(emit, ptype)
+					translated_alignment.append((t, u, translated_phoneme))
+				else:
+					translated_alignment.append((t, u, None))
+
+			return translated_alignment
 
 		except Exception as e:
 			return Failure(f"Error during detokenization: {e}")

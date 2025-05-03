@@ -160,20 +160,11 @@ class ForcedAligner:
 				self.logger.error(f"Failed to trace alignment path for {files['audio']}. Cause: {alignment_path}", extra={"hidden": True})
 				return alignment_path
 
-			# to do: move this to the text preprocessor
-
 			# Translate aligned tokens to phonemes
-			translated_alignment: TranslatedAlignment = []
-			for t, u, emit in alignment_path:
-				if emit is not None:
-					translated_phoneme = self.text_preprocessor.detokenize(emit, ptype)
-					if isinstance(translated_phoneme, Failure):
-						self.logger.error(f"Failed to detokenize phoneme {emit}. Cause: {translated_phoneme}", extra={"hidden": True})
-						return translated_phoneme
-
-					translated_alignment.append((t, u, translated_phoneme))
-				else:
-					translated_alignment.append((t, u, None))
+			translated_alignment: Union[TranslatedAlignment, Failure] = self.text_preprocessor.detokenize_alignment(alignment_path, ptype)
+			if isinstance(translated_alignment, Failure):
+				self.logger.error(f"Failed to translate alignment for {files['audio']}. Cause: {translated_alignment}", extra={"hidden": True})
+				return translated_alignment
 
 			# Save the alignment to textgrid
 			frame_duration = self.audio_preprocessor.frame_duration
