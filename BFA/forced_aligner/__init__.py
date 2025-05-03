@@ -5,8 +5,8 @@ from torch import Tensor
 from pathlib import Path
 from functools import partial
 from psutil import virtual_memory
+from typing import Literal, Union, List
 from multiprocessing import get_context, cpu_count
-from typing import Literal, Optional, Union, List
 
 from .inference_engine import InferenceEngine
 from .text_preprocessor import TextPreprocessor
@@ -47,7 +47,7 @@ class ForcedAligner:
 
 		try:
 			# Initialize components
-			self.logger = SharedLogger.get_instance(config["logger"])
+			self.logger = SharedLogger.get_instance(config["logger"], reset=True)
 			self.text_preprocessor = TextPreprocessor(language, config["text_preprocessor"])
 			self.audio_preprocessor = AudioPreprocessor(config["audio_preprocessor"])
 			self.inference_engine = InferenceEngine(config["inference_engine"])
@@ -93,7 +93,7 @@ class ForcedAligner:
 			self.logger.info(f"Using {n_jobs} jobs for processing.")
 
 			ctx = get_context("spawn")	# Use spawn for Windows compatibility
-			with ctx.Pool(n_jobs) as pool:	# , maxtasksperchild=self.config["maxtasksperchild"]
+			with ctx.Pool(n_jobs, initializer=self.init_worker, initargs=(self.config,)) as pool:
 				processed_files = 0
 				failures = 0
 
@@ -183,5 +183,13 @@ class ForcedAligner:
 			return True
 
 		except Exception as e:
-			self.logger.error(f"Failed to align pair {files['audio']} and {files['annotation']}. Cause: {e}", extra={"hidden": True})
+			self.logger.error(f"Failed to align pair {files['audio']} and {files['annotation']}. Cause: {e}", extra={"hidden": True}, exc_info=e)
 			return False
+
+
+	@staticmethod
+	def init_worker(config: dict) -> None:
+		"""Initialize the worker process."""
+		# Set the logger for the worker
+		logger = SharedLogger.get_instance(config["logger"])
+		logger.propagate = False

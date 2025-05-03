@@ -63,17 +63,17 @@ class SharedLogger:
 	_instance: Optional[Logger] = None
 
 	@classmethod
-	def get_instance(cls, config: Optional[dict] = None) -> Logger:
+	def get_instance(cls, config: Optional[dict] = None, reset: bool = False) -> Logger:
 		if not cls._instance is None:
 			return cls._instance
 		if config is None:
 			raise ValueError("Logger not initialized. Please provide a config.")
 
-		cls._instance = cls.get_logger(config)
+		cls._instance = cls.get_logger(config, reset)
 		return cls._instance
 
 	@classmethod
-	def get_logger(cls, config: dict) -> Logger:
+	def get_logger(cls, config: dict, reset: bool = False) -> Logger:
 		"""Initialize the logger."""
 
 		# Create log directory if it doesn't exist
@@ -85,7 +85,8 @@ class SharedLogger:
 		logger.setLevel(config["base_log_level"])
 
 		# Create file handler
-		file_handler = FileHandler(config["log_file"], mode="w")
+		write_mode = "w" if reset else "a"
+		file_handler = FileHandler(config["log_file"], mode=write_mode)
 		file_handler.setLevel(config["file_log_level"])
 
 		# Create console handler
