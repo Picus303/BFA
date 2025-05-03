@@ -3,6 +3,7 @@ from tqdm import tqdm
 from torch import Tensor
 from pathlib import Path
 from functools import partial
+from psutil import virtual_memory
 from multiprocessing import Pool, cpu_count
 from typing import Literal, Optional, Union, List
 
@@ -24,9 +25,18 @@ from ..utils import (
 torch.set_num_threads(1)
 torch.set_num_interop_threads(1)
 
+GO_RATIO = 1024**3
+
+
 
 class ForcedAligner:
-	def __init__(self, language: Literal["EN-GB", "EN-US"], config: dict) -> None:
+	def __init__(
+		self,
+		language: Literal["EN-GB", "EN-US"],
+		ignore_ram_usage: bool,
+		config: dict
+	) -> None:
+
 		self.config = config
 
 		try:
@@ -41,6 +51,10 @@ class ForcedAligner:
 			print(f"Failed to initialize Forced Aligner. Exiting...")
 			print(f"Error: {e}")
 			exit(code=1)
+
+		# Check available RAM
+		max_jobs = (virtual_memory().available / GO_RATIO) // self.config["ram_usage_per_thread"]
+		self.max_jobs = cpu_count() if ignore_ram_usage else max_jobs
 
 		self.logger.info("Forced Aligner initialized successfully.")
 		self.logger.info(f"Language: {language}")
@@ -68,7 +82,10 @@ class ForcedAligner:
 			# Start processing in parallel
 			assert -1 <= n_jobs <= cpu_count(), "Invalid number of jobs specified."
 			n_jobs = cpu_count() if n_jobs == -1 else n_jobs
-			n_jobs = min(n_jobs, len(file_pairs))
+			n_jobs = min(n_jobs, len(file_pairs), self.max_jobs)
+
+			self.logger.info(f"Using {n_jobs} jobs for processing.")
+
 			with Pool(n_jobs) as pool:
 				processed_files = 0
 				failures = 0

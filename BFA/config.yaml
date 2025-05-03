@@ -1,4 +1,5 @@
 chunk_size: 32
+ram_usage_per_thread: 2.0
 
 inference_engine:
     build_args:

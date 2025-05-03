@@ -26,7 +26,7 @@ To align a corpus, two directories are expected:
 - One that contains all your audio files (**.wav**, **.mp3**, **.flac** and **.pcm** files only)
 - One that contains all your annotations (**.txt** and **.lab** files only)
 
-You can find examples of such files in the [example](./examples) directory of this repository.
+You can find examples of such files in the [example](./example) directory of this repository.
 A recursive search will be used so **the only constraint is that both directories uses the same structure**. If you use the same directory for both, then your .wav and .lab pairs should be in the same sub-directory.
 
 ```bash
@@ -44,7 +44,7 @@ BFA align \
 ## Performances
 
 Aligning the **460 hours** of audio of the LibriSpeech dataset took **2 hours (realtime factor: x230)** on a **8 cores / 16 threads CPU**. Realtime factor on one core: x14.4.<br />
-It uses up to **1.6Go of RAM per thread** (average: 1.4Go) and a **maximum of 23Go** during this test.<br />
+**2Go of RAM per thread are required** (here, 32Go for 16 threads). By default, BFA will check your total RAM before starting jobs.<br />
 It **successfully aligned** more than **99%** of the files.<br />
 
 
@@ -54,8 +54,6 @@ All contributions are welcomed but my main goal is the following:
 
 Currently, the main limitation of this tool is it's context length (about 17.5 seconds) but RNN-T models can use a streaming implementation and this way handle files of arbitrary sizes.
 This would requires making the model causal (currently it isn't, in order to maximize accuracy) and write an inference function that can handle this method.
-
-The [training](./training) directory contains the code used to preprocess the data and train the model.
 
 It would also be interesting to support .TextGrid files for annotations (input).
 

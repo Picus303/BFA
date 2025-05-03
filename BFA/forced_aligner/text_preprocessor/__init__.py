@@ -121,6 +121,7 @@ class TextPreprocessor:
 
 
 	def detokenize_alignment(self, raw_alignment: RawAlignment, ptype: Literal["IPA", "Misaki"]) -> Union[TranslatedAlignment, Failure]:
+		"""Convert the alignment to phonemes."""
 		try:
 			translated_alignment: TranslatedAlignment = []
 			for t, u, emit in raw_alignment:
