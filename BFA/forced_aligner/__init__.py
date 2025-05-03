@@ -53,7 +53,7 @@ class ForcedAligner:
 			exit(code=1)
 
 		# Check available RAM
-		max_jobs = (virtual_memory().available / GO_RATIO) // self.config["ram_usage_per_thread"]
+		max_jobs = int((virtual_memory().total / GO_RATIO) // self.config["ram_usage_per_thread"])
 		self.max_jobs = cpu_count() if ignore_ram_usage else max_jobs
 
 		self.logger.info("Forced Aligner initialized successfully.")
