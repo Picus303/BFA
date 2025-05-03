@@ -17,7 +17,7 @@ The current architecture only supports audio clips up to about 17.5 seconds (see
 pip install BFA
 ```
 
-**Requires Python ≥ 3.12**
+**Requires Python ≥ 3.12**<br />
 
 
 ## Usage (CLI)
@@ -33,18 +33,20 @@ A recursive search will be used so **the only constraint is that both directorie
 BFA align \
   --audio-dir /path/to/audio_dir \
   --text-dir /path/to/text_dir \
-  --out-dir /path/to/out_dir \
+  [--out-dir /path/to/out_dir] \
   [--dtype {words, phonemes}] \
   [--ptype {IPA, Misaki}] \
   [--language {EN-GB, EN-US}] \
-  [--n-jobs N]
+  [--n-jobs N] \
+  [--ignore-ram-usage] \
+  [--config-path /path/to/config_file] \
 ```
 
 
 ## Performances
 
-Aligning the **460 hours** of audio of the LibriSpeech dataset took **2 hours (realtime factor: x230)** on a **8 cores / 16 threads CPU**. Realtime factor on one core: x14.4.<br />
-**2Go of RAM per thread are required** (here, 32Go for 16 threads). By default, BFA will check your total RAM before starting jobs.<br />
+Aligning the **460 hours** of audio of the LibriSpeech dataset took **2h30 (realtime factor: x184)** on a **8 cores / 16 threads CPU**. Realtime factor on one core: x11.5.<br />
+**1.5Go of RAM per thread are required** (here, 24Go for 16 threads). By default, BFA will check your total RAM before starting jobs.<br />
 It **successfully aligned** more than **99%** of the files.<br />
 
 

@@ -24,6 +24,8 @@ def align(
     ignore_ram_usage:   Annotated[bool, Parameter(help="Don't check if you have enough RAM to run the number of jobs requested")] = False,
     config_path:        Annotated[Path, Parameter(help="Path to config file. Should not be used if you're not a contributor")] = DEFAULT_CONFIG_PATH,
 ):
+    
+    print(ignore_ram_usage)
     # Load config
     config = load_cfg(config_path, ROOT_DIR)
     if isinstance(config, Failure):

@@ -1,13 +1,11 @@
 import torch
 from torch import Tensor
-from typing import Union
-import torch.nn.functional as F
 
 from .encoder import Encoder
 from .decoder import EncoderOnlyTransformer, build_encoder_only_transformer
 from .joint_network import JointNetwork
 
-from ...utils import Failure
+from ...utils import SharedLogger
 
 
 
@@ -34,6 +32,10 @@ class InferenceEngine:
 		self.decoder.eval()
 		self.joint_network.eval()
 
+		# Initialize logger
+		self.logger = SharedLogger.get_instance()
+		self.logger.info("Inference engine initialized successfully.")
+
 
 	@torch.no_grad()
 	def inference(
@@ -42,7 +44,7 @@ class InferenceEngine:
 		text: Tensor,
 		spectrogram_length: Tensor,
 		text_length: Tensor
-	) -> Union[Tensor, Failure]:
+	) -> Tensor:
 
 		try:
 			# Build Attention Mask:
@@ -59,4 +61,5 @@ class InferenceEngine:
 			return joint_output
 
 		except Exception as e:
-			return Failure(f"Error during inference: {e}")
+			self.logger.error(f"Error during inference: {e}", extra={"hidden": True})
+			raise RuntimeError(f"Error during inference: {e}")

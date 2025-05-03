@@ -1,5 +1,5 @@
 chunk_size: 32
-ram_usage_per_thread: 2.0
+ram_usage_per_thread: 1.5
 
 inference_engine:
     build_args:
@@ -26,9 +26,9 @@ inference_engine:
             vocab_size: 48
 
     weights_paths:
-        encoder: "forced_aligner/model/weights/bfa_model_encoder_100.pt"
-        decoder: "forced_aligner/model/weights/bfa_model_decoder_100.pt"
-        joint_network: "forced_aligner/model/weights/bfa_model_joint_network_100.pt"
+        encoder: "forced_aligner/inference_engine/weights/bfa_model_encoder_100.pt"
+        decoder: "forced_aligner/inference_engine/weights/bfa_model_decoder_100.pt"
+        joint_network: "forced_aligner/inference_engine/weights/bfa_model_joint_network_100.pt"
 
 
 text_preprocessor:

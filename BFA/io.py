@@ -2,7 +2,11 @@ from pathlib import Path
 from logging import Logger
 from typing import Optional, List, Tuple, Dict
 
-from .utils import Failure, FilePair, TranslatedAlignment
+from .utils import (
+	FilePair,
+	TranslatedAlignment,
+	SharedLogger,
+)
 
 Durations = List[Tuple[str, float]]
 Intervals = List[Tuple[float, float, str]]
@@ -11,6 +15,8 @@ Intervals = List[Tuple[float, float, str]]
 class IOManager:
 	def __init__(self, config: dict):
 		self.config = config
+		self.logger: Logger = SharedLogger.get_instance()
+		self.logger.info("IO manager initialized successfully.")
 
 
 	def get_pairs(self, audio_dir: Path, text_dir: Path, out_dir: Path) -> Tuple[List[FilePair], int, int]:
@@ -151,7 +157,7 @@ class IOManager:
 		frame_duration: float,
 		path: Path,
 		word_labels: Optional[List[str]] = None
-	) -> Optional[Failure]:
+	) -> None:
 
 		try:
 			# Convert the alignment to intervals
@@ -198,7 +204,6 @@ class IOManager:
 					f.write(f'            xmax = {xmax:.6f}\n')
 					f.write(f'            text = "{label}"\n')
 
-			return None	# Success
-
 		except Exception as e:
-			return Failure(f"Error writing TextGrid file: {e}")
+			self.logger.error(f"Error writing TextGrid file: {e}", extra={"hidden": True})
+			raise RuntimeError(f"Error writing TextGrid file: {e}")

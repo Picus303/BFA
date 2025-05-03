@@ -1,13 +1,14 @@
 import torch
+import resource
 from tqdm import tqdm
 from torch import Tensor
 from pathlib import Path
 from functools import partial
 from psutil import virtual_memory
-from multiprocessing import Pool, cpu_count
+from multiprocessing import get_context, cpu_count
 from typing import Literal, Optional, Union, List
 
-from .model import InferenceEngine
+from .inference_engine import InferenceEngine
 from .text_preprocessor import TextPreprocessor
 from .audio_preprocessor import AudioPreprocessor
 from .path_tracer import constrained_viterbi
@@ -18,12 +19,17 @@ from ..utils import (
 	FilePair,
 	RawAlignment,
 	TranslatedAlignment,
-	get_logger
+	SharedLogger,
 )
 
 # For thread safety, prevent pytorch from using multiple threads
 torch.set_num_threads(1)
 torch.set_num_interop_threads(1)
+
+# Increase maximum file descriptors
+soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+new_soft = min(hard, 8192)
+resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))
 
 GO_RATIO = 1024**3
 
@@ -41,7 +47,7 @@ class ForcedAligner:
 
 		try:
 			# Initialize components
-			self.logger = get_logger(config["logger"])
+			self.logger = SharedLogger.get_instance(config["logger"])
 			self.text_preprocessor = TextPreprocessor(language, config["text_preprocessor"])
 			self.audio_preprocessor = AudioPreprocessor(config["audio_preprocessor"])
 			self.inference_engine = InferenceEngine(config["inference_engine"])
@@ -86,7 +92,8 @@ class ForcedAligner:
 
 			self.logger.info(f"Using {n_jobs} jobs for processing.")
 
-			with Pool(n_jobs) as pool:
+			ctx = get_context("spawn")	# Use spawn for Windows compatibility
+			with ctx.Pool(n_jobs) as pool:	# , maxtasksperchild=self.config["maxtasksperchild"]
 				processed_files = 0
 				failures = 0
 
@@ -98,14 +105,14 @@ class ForcedAligner:
 					out_dir = out_dir,
 				)
 
-				generator = pool.imap(align_pair_partial, file_pairs, chunksize=self.config["chunk_size"])
+				generator = pool.imap_unordered(align_pair_partial, file_pairs, chunksize=self.config["chunk_size"])
 
 				# Wait for results
 				with tqdm(generator, total=len(file_pairs)) as pbar:
 					for i, result in enumerate(pbar):
 						processed_files += 1
 
-						if isinstance(result, Failure):
+						if not result:
 							failures += 1
 
 						# Update progress bar
@@ -130,77 +137,51 @@ class ForcedAligner:
 		dtype: Literal["words", "phonemes"],
 		ptype: Literal["IPA", "Misaki"],
 		out_dir: Path,
-	) -> Optional[Failure]:
-
-		# to do: allow modules to access the logger and remove all these "isinstance" checks
+	) -> bool:
 
 		try:
-			# Preprocess text and audio files
-			text_preprocessing_result = self.text_preprocessor.process_text(files["annotation"], dtype, ptype)
-			audio_preprocessing_result = self.audio_preprocessor.process_audio(files["audio"])
+			# 1) Preprocess text and audio files
+			phonemes_tensor, phonemes_tensor_length = self.text_preprocessor.process_text(files["annotation"], dtype, ptype)
+			audio_tensor, audio_tensor_length, audio_duration = self.audio_preprocessor.process_audio(files["audio"])
 
-			# Check if text preprocessing was successful
-			if isinstance(text_preprocessing_result, Failure):
-				self.logger.error(f"Failed to process text file {files['annotation']}. Cause: {text_preprocessing_result}", extra={"hidden": True})
-				return text_preprocessing_result
-			else:
-				phonemes_tensor, phonemes_tensor_length = text_preprocessing_result
-
-			# Check if audio preprocessing was successful
-			if isinstance(audio_preprocessing_result, Failure):
-				self.logger.error(f"Failed to process audio file {files['audio']}. Cause: {audio_preprocessing_result}", extra={"hidden": True})
-				return audio_preprocessing_result
-			else:
-				audio_tensor, audio_tensor_length, audio_duration = audio_preprocessing_result
-
-			# Get word labels if necessary
-			# Note: Reuses code from text preprocessing so don't need to check if it was successful
+			# 1.5) Get word labels if necessary
 			word_labels = self.text_preprocessor.get_word_labels(files["annotation"]) if dtype == "words" else None
 
-			# Predict alignments
+			# 2) Predict alignments
 			alignement_scores: Union[Tensor, Failure] = self.inference_engine.inference(
 				audio_tensor,
 				phonemes_tensor,
 				audio_tensor_length,
 				phonemes_tensor_length,
 			)
-			if isinstance(alignement_scores, Failure):
-				self.logger.error(f"Failed to predict alignments for {files['audio']}. Cause: {alignement_scores}", extra={"hidden": True})
-				return alignement_scores
 
-			# Trace alignment path
+			# 3) Trace alignment path
 			alignment_path: Union[RawAlignment, Failure] = constrained_viterbi(
 				alignement_scores[0],
 				phonemes_tensor[0, 1:]
 			)
 			if isinstance(alignment_path, Failure):
 				self.logger.error(f"Failed to trace alignment path for {files['audio']}. Cause: {alignment_path}", extra={"hidden": True})
-				return alignment_path
+				raise RuntimeError(f"Failed to trace alignment path for {files['audio']}. Cause: {alignment_path}")
 
-			# Translate aligned tokens to phonemes
-			translated_alignment: Union[TranslatedAlignment, Failure] = self.text_preprocessor.detokenize_alignment(alignment_path, ptype)
-			if isinstance(translated_alignment, Failure):
-				self.logger.error(f"Failed to translate alignment for {files['audio']}. Cause: {translated_alignment}", extra={"hidden": True})
-				return translated_alignment
+			# 4) Translate aligned tokens back to phonemes
+			translated_alignment: TranslatedAlignment = self.text_preprocessor.detokenize_alignment(alignment_path, ptype)
 
-			# Save the alignment to textgrid
+			# 5) Save the alignment to textgrid
 			frame_duration = self.audio_preprocessor.frame_duration
 
-			export_result = self.io_manager.alignment_to_textgrid(
+			self.io_manager.alignment_to_textgrid(
 				translated_alignment,
 				audio_duration,
 				frame_duration,
 				files["output"],
 				word_labels,
 			)
-			if isinstance(export_result, Failure):
-				self.logger.error(f"Failed to export alignment to textgrid for {files['audio']}. Cause: {export_result}", extra={"hidden": True})
-				return export_result
 
 			# All steps completed successfully
 			self.logger.info(f"Alignment for {files['audio']} completed successfully.")
-			return None
+			return True
 
 		except Exception as e:
 			self.logger.error(f"Failed to align pair {files['audio']} and {files['annotation']}. Cause: {e}", extra={"hidden": True})
-			return Failure(f"Failed to align pair {files['audio']} and {files['annotation']}. Cause: {e}")
+			return False

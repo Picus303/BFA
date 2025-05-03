@@ -1,4 +1,3 @@
-import os
 import yaml
 import logging
 from logging import (
@@ -11,7 +10,13 @@ from logging import (
 )
 
 from pathlib import Path
-from typing import Optional, Union, Dict, List, Tuple, Any	
+from typing import (
+	Optional,
+	Union,
+	Dict,
+	List,
+	Tuple,
+)	
 
 
 
@@ -53,40 +58,55 @@ def load_cfg(cfg_path: Path, root: Path) -> Union[dict, Failure]:
 
 
 
-def get_logger(config: dict) -> Logger:
-	"""Initialize the logger."""
+class SharedLogger:
 
-	# Create log directory if it doesn't exist
-	log_dir = Path(config["log_file"]).parent
-	log_dir.mkdir(parents=True, exist_ok=True)
+	_instance: Optional[Logger] = None
 
-	# Set up logging
-	logger = logging.getLogger(config["name"])
-	logger.setLevel(config["base_log_level"])
+	@classmethod
+	def get_instance(cls, config: Optional[dict] = None) -> Logger:
+		if not cls._instance is None:
+			return cls._instance
+		if config is None:
+			raise ValueError("Logger not initialized. Please provide a config.")
 
-	# Create file handler
-	file_handler = FileHandler(config["log_file"], mode="w")
-	file_handler.setLevel(config["file_log_level"])
+		cls._instance = cls.get_logger(config)
+		return cls._instance
 
-	# Create console handler
-	console_handler = StreamHandler()
-	console_handler.setLevel(config["console_log_level"])
+	@classmethod
+	def get_logger(cls, config: dict) -> Logger:
+		"""Initialize the logger."""
 
-	# Create formatter
-	formatter = Formatter(config["log_format"])
+		# Create log directory if it doesn't exist
+		log_dir = Path(config["log_file"]).parent
+		log_dir.mkdir(parents=True, exist_ok=True)
 
-	file_handler.setFormatter(formatter)
-	console_handler.setFormatter(formatter)
+		# Set up logging
+		logger = logging.getLogger(config["name"])
+		logger.setLevel(config["base_log_level"])
 
-	logger.addHandler(file_handler)
-	logger.addHandler(console_handler)
+		# Create file handler
+		file_handler = FileHandler(config["log_file"], mode="w")
+		file_handler.setLevel(config["file_log_level"])
 
-	# Create a filter to hide certain log messages
-	class VerboseFilter(Filter):
-		def filter(self, record: LogRecord) -> bool:
-			return not getattr(record, "hidden", False)
+		# Create console handler
+		console_handler = StreamHandler()
+		console_handler.setLevel(config["console_log_level"])
 
-	console_handler.addFilter(VerboseFilter())
+		# Create formatter
+		formatter = Formatter(config["log_format"])
 
-	logger.info("Logger initialized")
-	return logger
+		file_handler.setFormatter(formatter)
+		console_handler.setFormatter(formatter)
+
+		logger.addHandler(file_handler)
+		logger.addHandler(console_handler)
+
+		# Create a filter to hide certain log messages
+		class VerboseFilter(Filter):
+			def filter(self, record: LogRecord) -> bool:
+				return not getattr(record, "hidden", False)
+
+		console_handler.addFilter(VerboseFilter())
+
+		logger.info("Logger initialized")
+		return logger

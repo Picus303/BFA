@@ -5,10 +5,20 @@ from torch import Tensor
 from pathlib import Path
 from misaki.en import G2P
 from itertools import chain
-from typing import Union, Literal, List, Tuple, Dict, Set
+from typing import (
+	Literal,
+	List,
+	Tuple,
+	Dict,
+	Set,
+)
 
 from .tokenizer import Tokenizer
-from ...utils import Failure, RawAlignment, TranslatedAlignment
+from ...utils import (
+	RawAlignment,
+	TranslatedAlignment,
+	SharedLogger,
+)
 
 
 
@@ -39,6 +49,10 @@ class TextPreprocessor:
 		self.sorted_ipa_keys: List[str] = sorted(self.ipa_to_misaki_mapping, key=len, reverse=True)
 		self.stress_pattern = re.compile(r"[ˈˌ]")
 
+		# Initialize logger
+		self.logger = SharedLogger.get_instance()
+		self.logger.info("Text preprocessor initialized successfully.")
+
 	#==================================================================
 	# Special tokens
 	#==================================================================
@@ -59,7 +73,7 @@ class TextPreprocessor:
 	# G2P conversion
 	#==================================================================
 
-	def translate(self, text: str) -> Union[List[str], Failure]:
+	def translate(self, text: str) -> List[str]:
 		"""Convert raw text to phonemes (Misaki format)."""
 		try:
 			# Get the convertion tokens
@@ -87,13 +101,14 @@ class TextPreprocessor:
 			return self.add_special_tokens(output)
 		
 		except Exception as e:
-			return Failure(f"Error during G2P conversion: {e}")
+			self.logger.error(f"Error during G2P conversion: {e}", extra={"hidden": True})
+			raise RuntimeError(f"Error during G2P conversion: {e}")
 
 	#==================================================================
 	# Tokenization
 	#==================================================================
 
-	def tokenize(self, phonemes: List[str]) -> Union[Tuple[Tensor, Tensor], Failure]:
+	def tokenize(self, phonemes: List[str]) -> Tuple[Tensor, Tensor]:
 		"""Convert phonemes to indices for the model embeddings."""
 		try:
 			# Convert the phonemes to indices
@@ -106,7 +121,8 @@ class TextPreprocessor:
 			return phoneme_tensor, l_phoneme
 
 		except Exception as e:
-			return Failure(f"Error during tokenization: {e}")
+			self.logger.error(f"Error during tokenization: {e}", extra={"hidden": True})
+			raise RuntimeError(f"Error during tokenization: {e}")
 
 
 	def detokenize(self, phoneme: int, ptype: Literal["IPA", "Misaki"]) -> str:
@@ -120,7 +136,7 @@ class TextPreprocessor:
 			raise ValueError(f"Unknown ptype: {ptype}")
 
 
-	def detokenize_alignment(self, raw_alignment: RawAlignment, ptype: Literal["IPA", "Misaki"]) -> Union[TranslatedAlignment, Failure]:
+	def detokenize_alignment(self, raw_alignment: RawAlignment, ptype: Literal["IPA", "Misaki"]) -> TranslatedAlignment:
 		"""Convert the alignment to phonemes."""
 		try:
 			translated_alignment: TranslatedAlignment = []
@@ -134,7 +150,8 @@ class TextPreprocessor:
 			return translated_alignment
 
 		except Exception as e:
-			return Failure(f"Error during detokenization: {e}")
+			self.logger.error(f"Error during detokenization: {e}", extra={"hidden": True})
+			raise RuntimeError(f"Error during detokenization: {e}")
 
 	#==================================================================
 	# IPA to Misaki conversion
@@ -175,7 +192,7 @@ class TextPreprocessor:
 		return [self.segment_ipa_word(word) for word in words]
 
 
-	def ipa_to_misaki(self, text: str) -> Union[List[str], Failure]:
+	def ipa_to_misaki(self, text: str) -> List[str]:
 		"""
 		Convert a string of IPA symbols to Misaki symbols.
 		Only used before alignment.
@@ -198,7 +215,8 @@ class TextPreprocessor:
 			return self.add_special_tokens(ipa_text)
 
 		except Exception as e:
-			return Failure(f"Error during IPA to Misaki conversion: {e}")
+			self.logger.error(f"Error during IPA to Misaki conversion: {e}", extra={"hidden": True})
+			raise RuntimeError(f"Error during IPA to Misaki conversion: {e}")
 	
 
 	def misaki_to_ipa(self, phoneme: str) -> str:
@@ -212,7 +230,7 @@ class TextPreprocessor:
 	# Main functions
 	#==================================================================
 
-	def process_misaki(self, text: str) -> Union[List[str], Failure]:
+	def process_misaki(self, text: str) -> List[str]:
 		"""Process the text file and return the phonemes in Misaki format."""
 		try:
 			# Split the text into words
@@ -227,7 +245,8 @@ class TextPreprocessor:
 			return phonemes
 
 		except Exception as e:
-			return Failure(f"Error during text processing (Misaki): {e}")
+			self.logger.error(f"Error during text processing (Misaki): {e}", extra={"hidden": True})
+			raise RuntimeError(f"Error during text processing (Misaki): {e}")
 
 
 	def process_text(
@@ -235,7 +254,7 @@ class TextPreprocessor:
 		text_path: Path,
 		dtype: Literal["words", "phonemes"],
 		ptype: Literal["IPA", "Misaki"]
-	) -> Union[Tuple[Tensor, Tensor], Failure]:
+	) -> Tuple[Tensor, Tensor]:
 		"""Process the text file and return the phonemes."""
 
 		try:
@@ -266,15 +285,12 @@ class TextPreprocessor:
 				case _:
 					raise ValueError(f"Unknown dtype: {dtype}")
 
-			# Check if processing was successful
-			if isinstance(phonemes, Failure):
-				raise RuntimeError(phonemes)
-
 			# Tokenize the phonemes
 			return self.tokenize(phonemes)
 
 		except Exception as e:
-			return Failure(f"Error during text processing: {e}")
+			self.logger.error(f"Error during text processing: {e}", extra={"hidden": True})
+			raise RuntimeError(f"Error during text processing: {e}")
 
 
 	def get_word_labels(self, text_path: Path) -> List[str]:

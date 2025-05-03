@@ -2,10 +2,10 @@ import torch
 import torchaudio
 from torch import Tensor
 from pathlib import Path
-from typing import Union, Tuple
+from typing import Tuple
 from torchaudio.transforms import Resample, MelSpectrogram
 
-from ..utils import Failure
+from ..utils import SharedLogger
 
 
 
@@ -13,6 +13,7 @@ class AudioPreprocessor:
 	def __init__(self, config: dict) -> None:
 		self.config = config
 
+		# Initialize transforms
 		self.mel_transform = MelSpectrogram(
 			sample_rate = self.config["sample_rate"],
 			n_fft = self.config["n_fft"],
@@ -26,8 +27,12 @@ class AudioPreprocessor:
 		self.sample_rate: int = self.config["sample_rate"]
 		self.frame_duration: float = self.config["hop_size"] / self.config["sample_rate"]
 
+		# Intialize logger
+		self.logger = SharedLogger.get_instance()
+		self.logger.info("Audio preprocessor initialized successfully.")
 
-	def process_audio(self, audio_path: Path) -> Union[Tuple[Tensor, Tensor, float], Failure]:
+
+	def process_audio(self, audio_path: Path) -> Tuple[Tensor, Tensor, float]:
 		try:
 			# Load, resample and normalize the audio
 			audio, sample_rate = torchaudio.load(audio_path)
@@ -50,4 +55,5 @@ class AudioPreprocessor:
 			return mel, l_mel, audio_duration
 
 		except Exception as e:
-			return Failure(f"Error during audio processing: {e}")
+			self.logger.error(f"Error during audio processing: {e}", extra={"hidden": True})
+			raise RuntimeError(f"Error during audio processing: {e}")
