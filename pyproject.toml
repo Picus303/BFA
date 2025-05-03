@@ -6,6 +6,9 @@ authors     = [{name="Picus303", email="pilleurc@protonmail.com"}]
 readme      = "README.md"
 license     = "MIT"
 
+[project.urls]
+Homepage = "https://pypi.org/project/BFA/"
+
 requires-python = ">=3.12"
 dependencies = [
     "torch>=2.6",
