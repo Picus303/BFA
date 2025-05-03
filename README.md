@@ -30,7 +30,7 @@ You can find examples of such files in the [example](./example) directory of thi
 A recursive search will be used so **the only constraint is that both directories uses the same structure**. If you use the same directory for both, then your .wav and .lab pairs should be in the same sub-directory.
 
 ```bash
-BFA align \
+bfa align \
   --audio-dir /path/to/audio_dir \
   --text-dir /path/to/text_dir \
   [--out-dir /path/to/out_dir] \
@@ -48,6 +48,12 @@ BFA align \
 Aligning the **460 hours** of audio of the LibriSpeech dataset took **2h30 (realtime factor: x184)** on a **8 cores / 16 threads CPU**. Realtime factor on one core: x11.5.<br />
 **1.5Go of RAM per thread are required** (here, 24Go for 16 threads). By default, BFA will check your total RAM before starting jobs.<br />
 It **successfully aligned** more than **99%** of the files.<br />
+
+
+## To Do:
+
+- Test IPA ptype
+- Test Word dtype
 
 
 ## Contributions

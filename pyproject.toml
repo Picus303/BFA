@@ -11,14 +11,32 @@ dependencies = [
     "torchaudio>=2.6",
     "cyclopts>=3.14",
     "misaki==0.9",
-    "matplotlib>=3.8"
+    "matplotlib>=3.8",
     "tqdm>=4.66",
     "pyyaml>=6.0"
 ]
 
 [project.scripts]
-aligner = "BFA.main:app"
+bfa = "BFA.main:app"
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["BFA", "BFA.*"]
+exclude = ["out*", "temp*"]
+
+[tool.setuptools.package-data]
+"BFA" = [
+  "config.yaml",
+  "logs/placeholder.txt",
+  "forced_aligner/inference_engine/weights/bfa_model_encoder_100.pt",
+  "forced_aligner/inference_engine/weights/bfa_model_decoder_100.pt",
+  "forced_aligner/inference_engine/weights/bfa_model_joint_network_100.pt",
+  "forced_aligner/text_preprocessor/tokenizer/tokenizer.json",
+  "forced_aligner/text_preprocessor/ipa_mapping.json"
+]
